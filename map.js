@@ -7,6 +7,8 @@ opt = arr.map((ar) => {
 
 param = opt.toString()
 
+
+
 string = `user/Adduser?${param}`
 
 console.log(string)
