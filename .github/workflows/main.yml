@@ -1,0 +1,30 @@
+name: Create Tag on Master PR Merge
+
+on:
+  pull_request:
+    types:
+      - closed
+
+jobs:
+  create_tag:
+    if: github.event.pull_request.merged == true && github.event.pull_request.base.ref == 'master'
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    - name: Create Tag
+      run: |
+        # Get the latest commit SHA
+        COMMIT_SHA=$(git rev-parse HEAD)
+        
+        # Generate a version tag based on the current date and time
+        TAG="v$(date +'%Y%m%d%H%M%S')"
+
+        # Create the tag and push it to GitHub
+        git tag -a $TAG -m "Tag created on PR merge" $COMMIT_SHA
+        git push origin $TAG
+
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
