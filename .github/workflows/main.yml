@@ -1,0 +1,30 @@
+name: Create Tag on PR Merge
+
+on:
+  pull_request:
+    types:
+      - closed
+
+jobs:
+  create_tag:
+    if: github.event.pull_request.merged == true
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v2
+
+      - name: Set Git user identity
+        run: |
+          git config user.name "Mangesh Bangale"
+          git config user.email "mangeshbangale27@gmail.com"
+        env:
+          GITHUB_TOKEN: ${{ secrets.GIT_TOKEN }}
+
+      - name: Create tag
+        id: create_tag
+        run: |
+          git tag v1.0.0   # Replace with the desired tag name
+          git push origin --tags
+        env:
+          GITHUB_TOKEN: ${{ secrets.GIT_TOKEN }}
