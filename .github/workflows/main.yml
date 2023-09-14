@@ -62,6 +62,7 @@ jobs:
         id: create-release
         if: success()
         run: |
+          #!/usr/bin/bash
           curl -L \
             -X POST \
             -H "Accept: application/vnd.github+json" \
