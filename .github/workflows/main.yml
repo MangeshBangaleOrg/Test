@@ -14,6 +14,13 @@ jobs:
       - name: Check out code
         uses: actions/checkout@v2
 
+      - name: Set Git user identity
+        run: |
+          git config user.name "Mangesh Bangale"
+          git config user.email "mangeshbangale27@gmail.com"
+        env:
+          GITHUB_TOKEN: ${{ secrets.GIT_TOKEN }}
+
       - name: Create tag
         id: create_tag
         run: |
