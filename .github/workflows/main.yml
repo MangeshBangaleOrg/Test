@@ -33,9 +33,7 @@
 name: Create Tag and GitHub Release
 
 on:
-   pull_request:
-    types:
-      - merged
+  push:
     branches:
       - master
 
@@ -51,6 +49,25 @@ jobs:
         run: |
           git config user.name "Mangesh Bangale"
           git config user.email "mangeshbangale27@gmail.com"
+
+      - name: Check if Push Triggered by Pull Request
+        id: is-pr
+        run: echo "::set-output name=IS_PR::$(if [ -n "${{ github.event.before }}" ]; then echo 'true'; else echo 'false'; fi)"
+
+      - name: Get Pull Request Title
+        id: pr-title
+        run: |
+          PR_URL="https://api.github.com/repos/${{ github.repository }}/pulls/${{ github.event.pull_request.number }}"
+          PR_TITLE=$(curl -s -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" $PR_URL | jq -r '.title')
+          echo "::set-output name=PR_TITLE::$PR_TITLE"
+          echo $PR_TITLE
+
+      - name: Display Pull Request Title
+        if: steps.is-pr.outputs.IS_PR == 'true'
+        run: |
+          PR_TITLE="${{ steps.pr-title.outputs.PR_TITLE }}"
+          echo "Pull Request Title: $PR_TITLE"
+
 
       - name: Create Tag
         id: create-tag
