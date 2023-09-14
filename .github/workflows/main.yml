@@ -51,35 +51,24 @@ jobs:
           git config user.email "mangeshbangale27@gmail.com"
 
       - name: Create Tag
+        id: create-tag
         run: |
-          TAG=$(date +'%Y%m%d%H%M%S')
-          git tag $TAG
-          git push origin $TAG
-          echo "::set-output name=tag::$TAG"
-
-      - name: Create GitHub Release
-        id: create_release
-        uses: softprops/action-gh-release@v1
-        with:
-          files: |
-            # List of files to include in the release (e.g., build artifacts)
-            path/to/file1
-            path/to/file2
+          TAG_NAME="v$(date +'%Y%m%d%H%M%S')"
+          git tag $TAG_NAME
+          git push origin $TAG_NAME
         env:
           GITHUB_TOKEN: ${{ secrets.GIT_TOKEN }}
 
-      - name: Create Release Page
-        if: steps.create_tag.outputs.tag != ''
+      - name: Create Release
+        id: create-release
         run: |
-          TAG=${{ steps.create_tag.outputs.tag }}
-          curl -X POST \
-            -H "Accept: application/vnd.github.v3+json" \
-            -H "Authorization: token ${{ secrets.GIT_TOKEN }}" \
-            "https://api.github.com/repos/${{ github.repository }}/releases" \
-            -d '{
-              "tag_name": "'"${TAG}"'",
-              "name": "'"${TAG}"'",
-              "body": "Release notes for ${TAG}",
-              "draft": false,
-              "prerelease": false
-            }'
+          TAG_NAME=${{ steps.create-tag.outputs.TAG_NAME }}
+          curl -X POST "https://api.github.com/repos/${{ github.repository }}/releases" -H "Authorization: token ${{ secrets.GIT_TOKEN }}" -d '{
+            "tag_name": "$TAG_NAME",
+            "name": "$TAG_NAME",
+            "body": "Release $TAG_NAME",
+            "draft": false,
+            "prerelease": false
+          }'
+        env:
+          GITHUB_TOKEN: ${{ secrets.GIT_TOKEN }}
