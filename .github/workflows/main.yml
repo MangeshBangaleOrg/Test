@@ -59,8 +59,12 @@ jobs:
       - name: List Changed Files
         id: list_changed_files
         run: |
-          CHANGED_FILES=$(git diff --name-only HEAD~1..HEAD)
-          echo "::set-output name=changed_files::$CHANGED_FILES"
+          if [ $(git rev-list --count HEAD ^master) -ne 0 ]; then
+            CHANGED_FILES=$(git diff --name-only HEAD~1..HEAD)
+            echo "::set-output name=changed_files::$CHANGED_FILES"
+          else
+            echo "::set-output name=changed_files::"
+          fi
 
       - name: Create GitHub Release
         id: create_release
