@@ -56,7 +56,7 @@ jobs:
 
       - name: Get Pull Request Title
         id: pr-title
-        if: steps.is-pr.outputs.IS_PR == 'true'
+        # if: steps.is-pr.outputs.IS_PR == 'true'
         run: |
           echo ${{ github.event.pull_request.number }}"
           PR_URL="https://api.github.com/repos/${{ github.repository }}/pulls/${{ github.event.pull_request.number }}"
