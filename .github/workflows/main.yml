@@ -16,8 +16,8 @@ jobs:
 
     - name: Create Tag
       run: |
-        git config --global user.email "mangeshbangale27@gmail.com"
-        git config --global user.name "Mangesh Bangale"
+        git config user.email "mangeshbangale27@gmail.com"
+        git config user.name "Mangesh Bangale"
         # Get the latest commit SHA
         COMMIT_SHA=$(git rev-parse HEAD)
         
