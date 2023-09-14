@@ -1,30 +1,71 @@
-name: Create Tag on PR Merge
+# name: Create Tag on PR Merge
+
+# on:
+#   pull_request:
+#     types:
+#       - closed
+
+# jobs:
+#   create_tag:
+#     if: github.event.pull_request.merged == true
+#     runs-on: ubuntu-latest
+
+#     steps:
+#       - name: Check out code
+#         uses: actions/checkout@v2
+
+#       - name: Set Git user identity
+#         run: |
+          # git config user.name "Mangesh Bangale"
+          # git config user.email "mangeshbangale27@gmail.com"
+#         env:
+#           GITHUB_TOKEN: ${{ secrets.GIT_TOKEN }}
+
+#       - name: Create tag
+#         id: create_tag
+#         run: |
+#           git tag v1.0.0   # Replace with the desired tag name
+#           git push origin --tags
+#         env:
+#           GITHUB_TOKEN: ${{ secrets.GIT_TOKEN }}
+
+
+name: Create Tag and GitHub Release
 
 on:
-  pull_request:
-    types:
-      - closed
+  push:
+    branches:
+      - master
 
 jobs:
-  create_tag:
-    if: github.event.pull_request.merged == true
+  release:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Check out code
+      - name: Checkout code
         uses: actions/checkout@v2
 
-      - name: Set Git user identity
+      - name: Set up Git
         run: |
           git config user.name "Mangesh Bangale"
           git config user.email "mangeshbangale27@gmail.com"
-        env:
-          GITHUB_TOKEN: ${{ secrets.GIT_TOKEN }}
 
-      - name: Create tag
-        id: create_tag
+      - name: Create Tag
         run: |
-          git tag v1.0.0   # Replace with the desired tag name
-          git push origin --tags
+          TAG=$(date +'%Y%m%d%H%M%S')
+          git tag $TAG
+          git push origin $TAG
+
+      - name: List Changed Files
+        id: list_changed_files
+        run: |
+          CHANGED_FILES=$(git diff --name-only HEAD~1..HEAD)
+          echo "::set-output name=changed_files::$CHANGED_FILES"
+
+      - name: Create GitHub Release
+        id: create_release
+        uses: softprops/action-gh-release@v1
+        with:
+          files: ${{ steps.list_changed_files.outputs.changed_files }}
         env:
           GITHUB_TOKEN: ${{ secrets.GIT_TOKEN }}
