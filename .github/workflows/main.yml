@@ -56,20 +56,23 @@ jobs:
           TAG_NAME="v$(date +'%Y%m%d%H%M%S')"
           git tag $TAG_NAME
           git push origin $TAG_NAME
+          echo "::set-output name=TAG_NAME::$TAG_NAME"
         env:
           GITHUB_TOKEN: ${{ secrets.GIT_TOKEN }}
 
-      - name: Create Release
+      - name: Create Draft Release
         id: create-release
+        if: success()
         run: |
           TAG_NAME=${{ steps.create-tag.outputs.TAG_NAME }}
-          curl -X POST "https://api.github.com/repos/${{ github.repository }}/releases" -H "Authorization: token ${{ secrets.GIT_TOKEN }}" -d '{
-            "tag_name": "$TAG_NAME",
-            "name": "$TAG_NAME",
-            "body": "Release $TAG_NAME",
-            "draft": false,
-            "prerelease": false
-          }'
+          curl -X POST "https://api.github.com/repos/${{ github.repository }}/releases" \
+            -H "Authorization: token ${{ secrets.GIT_TOKEN }}" \
+            -d '{
+              "tag_name": "$TAG_NAME",
+              "name": "$TAG_NAME",
+              "body": "Draft Release for $TAG_NAME",
+              "draft": true,
+              "prerelease": false
+            }'
         env:
           GITHUB_TOKEN: ${{ secrets.GIT_TOKEN }}
-          
