@@ -33,7 +33,9 @@
 name: Create Tag and GitHub Release
 
 on:
-  push:
+   pull_request:
+    types:
+      - closed
     branches:
       - master
 
@@ -57,8 +59,6 @@ jobs:
           git tag $TAG_NAME
           git push origin $TAG_NAME
           echo "TAG_NAME=$TAG_NAME" >> $GITHUB_ENV
-        env:
-          GITHUB_TOKEN: ${{ secrets.GIT_TOKEN }}
       - name: Debug GIT_TOKEN
         run: echo "GIT_TOKEN is ${{ secrets.GIT_TOKEN }}"
 
@@ -73,5 +73,3 @@ jobs:
             -H "X-GitHub-Api-Version: 2022-11-28" \
             https://api.github.com/repos/${{ github.repository }}/releases \
             -d '{"tag_name":${{ env.TAG_NAME }},"target_commitish":"master","name":"test ${{ env.TAG_NAME }}","body":"Description of the release","draft":false,"prerelease":false,"generate_release_notes":true}'
-        env:
-          GITHUB_TOKEN: ${{ secrets.GIT_TOKEN }}
