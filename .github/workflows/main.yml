@@ -55,21 +55,31 @@ jobs:
           TAG=$(date +'%Y%m%d%H%M%S')
           git tag $TAG
           git push origin $TAG
-
-      - name: List Changed Files
-        id: list_changed_files
-        run: |
-          if [ $(git rev-list --count HEAD ^master) -ne 0 ]; then
-            CHANGED_FILES=$(git diff --name-only HEAD~1..HEAD)
-            echo "::set-output name=changed_files::$CHANGED_FILES"
-          else
-            echo "::set-output name=changed_files::"
-          fi
+          echo "::set-output name=tag::$TAG"
 
       - name: Create GitHub Release
         id: create_release
         uses: softprops/action-gh-release@v1
         with:
-          files: ${{ steps.list_changed_files.outputs.changed_files }}
+          files: |
+            # List of files to include in the release (e.g., build artifacts)
+            path/to/file1
+            path/to/file2
         env:
           GITHUB_TOKEN: ${{ secrets.GIT_TOKEN }}
+
+      - name: Create Release Page
+        if: steps.create_tag.outputs.tag != ''
+        run: |
+          TAG=${{ steps.create_tag.outputs.tag }}
+          curl -X POST \
+            -H "Accept: application/vnd.github.v3+json" \
+            -H "Authorization: token ${{ secrets.GIT_TOKEN }}" \
+            "https://api.github.com/repos/${{ github.repository }}/releases" \
+            -d '{
+              "tag_name": "'"${TAG}"'",
+              "name": "'"${TAG}"'",
+              "body": "Release notes for ${TAG}",
+              "draft": false,
+              "prerelease": false
+            }'
