@@ -58,7 +58,7 @@ jobs:
           git push origin $TAG_NAME
           echo "::set-output name=TAG_NAME::$TAG_NAME"
         env:
-          GITHUB_TOKEN: ${{ secrets.GIT_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.PAT_TOKEN }}
 
       - name: Create Draft Release
         id: create-release
@@ -72,4 +72,4 @@ jobs:
             https://api.github.com/repos/${{ github.repository }}/releases \
             -d '{"tag_name":"v1.0.0","target_commitish":"master","name":"v1.0.0","body":"Description of the release","draft":false,"prerelease":false,"generate_release_notes":true}'
         env:
-          GITHUB_TOKEN: ${{ secrets.GIT_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.PAT_TOKEN }}
