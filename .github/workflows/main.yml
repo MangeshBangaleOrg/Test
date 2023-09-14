@@ -35,7 +35,7 @@ name: Create Tag and GitHub Release
 on:
    pull_request:
     types:
-      - closed
+      - merged
     branches:
       - master
 
