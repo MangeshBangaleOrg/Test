@@ -68,9 +68,9 @@ jobs:
           curl -X POST "https://api.github.com/repos/${{ github.repository }}/releases" \
             -H "Authorization: token ${{ secrets.GIT_TOKEN }}" \
             -d '{
-              "tag_name": "$TAG_NAME",
-              "name": "$TAG_NAME",
-              "body": "Draft Release for $TAG_NAME",
+              "tag_name": "v20230914055848",
+              "name": "v20230914055848",
+              "body": "Draft Release for v20230914055848",
               "draft": true,
               "prerelease": false
             }'
