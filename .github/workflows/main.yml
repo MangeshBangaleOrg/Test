@@ -136,6 +136,7 @@ jobs:
           -d '{"commit_title":"Expand enum","commit_message":"Add a new value to the merge_method enum","merge_method":"merge"}'
         env:
           GIT_TOKEN: ${{ secrets.GIT_TOKEN }}
+          PR_NUMBER: $${{ github.event.pull_request.title }}
 
 
 
