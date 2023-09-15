@@ -112,4 +112,4 @@ jobs:
     steps:
       - run: |
           echo "This PR was approved"
-          cat $GITHUB_EVENT_PATH
+          echo ${{ github.event.pull_request_number }}
