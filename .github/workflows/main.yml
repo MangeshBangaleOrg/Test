@@ -103,16 +103,16 @@ on:
       - submitted
     branches:
       - master
+
 jobs:
   approved:
     if: github.event.review.state == 'approved'
     runs-on: ubuntu-latest
     steps:
-      - name: set PR title and number and git token as env
+      - name: get PR title and number
         env:
           PR_TITLE: ${{ github.event.pull_request.title }}
           PR_NUMBER: ${{ github.event.pull_request.number }}
-          GIT_TOKEN: ${{ secrets.GIT_TOKEN }}
         run: |
           echo "This PR was approved"
           echo "PR_NUMBER=${{ github.event.pull_request.title }}" >> $GITHUB_ENV
@@ -123,6 +123,10 @@ jobs:
 
       - name: Merge Pull Request
         if: success()
+        env:
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+          PR_TITLE: ${{ github.event.pull_request.title }}
+          GIT_TOKEN: ${{ secrets.GIT_TOKEN }}
         run: |
           git config user.name "mangeshbangale27"
           git config user.email "mangeshbangale27@gmail.com"
@@ -140,6 +144,8 @@ jobs:
           echo "TAG_NAME=$TAG_NAME" >> $GITHUB_ENV
 
       - name: Create Release
+        env:
+          GIT_TOKEN: ${{ secrets.GIT_TOKEN }}
         id: create-release
         if: success()
         run: |
