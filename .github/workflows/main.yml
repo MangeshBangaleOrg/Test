@@ -127,8 +127,7 @@ jobs:
           git merge --no-ff --no-commit ${{ github.event.pull_request.base.sha }}
           git commit -m "Merge pull request #${{ github.event.pull_request.number }}: ${{ github.event.pull_request.title }}"
           git push origin HEAD:${{ github.event.pull_request.base.ref }}
-        env:
-          GITHUB_TOKEN: ${{ secrets.GIT_TOKEN }}
+
 
 
         
