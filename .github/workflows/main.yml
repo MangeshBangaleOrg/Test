@@ -140,6 +140,8 @@ jobs:
           -d '{"commit_title":"Expand enum","commit_message":"Add a new value to the merge_method enum","merge_method":"merge"}'
 
       - name: Create Tag
+        env:
+          PR_TITLE: ${{ github.event.pull_request.title }}
         id: create-tag
         run: |
           TAG_NAME=$(echo $PR_TITLE | grep -oP 'v\d+\.\d+\.\d+')
@@ -148,6 +150,9 @@ jobs:
           echo "TAG_NAME=$TAG_NAME" >> $GITHUB_ENV
 
       - name: Create Release
+        env:
+          PR_TITLE: ${{ github.event.pull_request.title }}
+          GIT_TOKEN: ${{ secrets.GIT_TOKEN }}
         id: create-release
         if: success()
         run: |
