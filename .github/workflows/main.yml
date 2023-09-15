@@ -111,11 +111,11 @@ jobs:
     steps:
       - name: get PR title and number
         env:
-          PR_TITLE: ${{ github.event.pull_request.title }}
-          PR_NUMBER: ${{ github.event.pull_request.number }}
+          # PR_TITLE: ${{ github.event.pull_request.title }}
+          # PR_NUMBER: ${{ github.event.pull_request.number }}
         run: |
           echo "This PR was approved"
-          echo "PR_NUMBER=${{ github.event.pull_request.title }}" >> $GITHUB_ENV
+          echo "PR_NUMBER=${{ github.event.pull_request.number }}" >> $GITHUB_ENV
           echo "PR_TITLE=$${{ github.event.pull_request.title }}" >> $GITHUB_ENV
 
       - name: Checkout code
@@ -124,8 +124,8 @@ jobs:
       - name: Merge Pull Request
         if: success()
         env:
-          PR_NUMBER: ${{ github.event.pull_request.number }}
-          PR_TITLE: ${{ github.event.pull_request.title }}
+          # PR_NUMBER: ${{ github.event.pull_request.number }}
+          # PR_TITLE: ${{ github.event.pull_request.title }}
           GIT_TOKEN: ${{ secrets.GIT_TOKEN }}
         run: |
           git config user.name "mangeshbangale27"
