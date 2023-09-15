@@ -110,7 +110,12 @@ jobs:
     if: github.event.review.state == 'approved'
     runs-on: ubuntu-latest
     steps:
-      - run: |
+      - name: get PR title and number
+        env:
+          PR_TITLE: ${{ github.event.pull_request.title }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+        run: |
           echo "This PR was approved"
-          echo "Pull request title is : :${{ github.event.pull_request.title }}
-          echo "Pull request number is : :${{ github.event.pull_request.number }}
+          echo "Pull request title is: $PR_TITLE "
+          echo "Pull request number is : $PR_NUMBER "
+        
