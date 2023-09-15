@@ -118,6 +118,9 @@ jobs:
           echo "This PR was approved"
           echo "Pull request title is: $PR_TITLE "
           echo "Pull request number is : $PR_NUMBER "
+          
+      - name: Checkout code
+        uses: actions/checkout@v2
 
       - name: Merge Pull Request
         run: |
