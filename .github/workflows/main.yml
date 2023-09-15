@@ -112,4 +112,4 @@ jobs:
     steps:
       - run: |
           echo "This PR was approved"
-          echo $GITHUB_EVENT_PATH
+          cat $GITHUB_EVENT_PATH
