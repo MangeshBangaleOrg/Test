@@ -23,6 +23,8 @@ jobs:
             echo "VALID_TITLE=false" >> $GITHUB_ENV
           fi
       - name: Send Warning Comment
+        env:
+          GIT_TOKEN: ${{ secrets.GIT_TOKEN }}
         if: steps.title-check.outputs.invalid_title == 'true'
         run: |
           curl -X POST -H "Authorization: token $GIT_TOKEN" \
