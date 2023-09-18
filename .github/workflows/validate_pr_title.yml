@@ -1,0 +1,28 @@
+name: PR Title Check
+
+on:
+  pull_request:
+    types:
+      - opened
+      - reopned
+    branches:
+      - master
+
+jobs:
+  pr_title_check:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check PR Title
+        env:
+          PR_TITLE: ${{ github.event.pull_request.title }}
+        id: title-check
+        run: |
+          TITLE_REGEX="Release"
+          if [[ ! "$PR_TITLE" =~ $TITLE_REGEX ]]; then
+            echo "VALID_TITLE=$TAG_NAME" >> $GITHUB_ENV
+          fi
+      - name: Send Warning Comment
+        if: steps.title-check.outputs.VALID_TITLE == 'true'
+        run: |
+          COMMENT="Please follow the correct PR title format."
+          echo "$COMMENT" | gh issue comment "${{ github.event.pull_request.number }}" --body -
