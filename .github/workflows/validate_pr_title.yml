@@ -14,14 +14,16 @@ jobs:
       - name: Check PR Title
         env:
           PR_TITLE: ${{ github.event.pull_request.title }}
+          GIT_TOKEN: ${{ secrets.GIT_TOKEN }}
         id: title-check
         run: |
           TITLE_REGEX="Release"
           if [[ ! "$PR_TITLE" =~ $TITLE_REGEX ]]; then
-            echo "VALID_TITLE=$TAG_NAME" >> $GITHUB_ENV
+            echo "VALID_TITLE=false" >> $GITHUB_ENV
           fi
       - name: Send Warning Comment
-        if: steps.title-check.outputs.VALID_TITLE == 'true'
+        if: steps.title-check.outputs.VALID_TITLE == 'false'
         run: |
-          COMMENT="Please follow the correct PR title format."
-          echo "$COMMENT" | gh issue comment "${{ github.event.pull_request.number }}" --body -
+          curl -X POST -H "Authorization: token $GIT_TOKEN" \
+            -d "{\"body\":\":warning: **Warning:** Please follow the correct PR title format.\"}" \
+            "https://api.github.com/repos/${{ github.repository }}/issues/${{ github.event.pull_request.number }}/comments"
