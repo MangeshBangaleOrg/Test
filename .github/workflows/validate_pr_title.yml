@@ -2,7 +2,8 @@ name: PR Title Check
 
 on:
   pull_request:
-    types: [reopened, opened]
+    types: 
+      - opened
     branches:
       - workflow
 
