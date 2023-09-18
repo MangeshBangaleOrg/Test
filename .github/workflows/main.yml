@@ -96,7 +96,7 @@
 #             -d '{"tag_name":${{ env.TAG_NAME }},"target_commitish":"master","name":"test ${{ env.TAG_NAME }}","body":"Description of the release","draft":false,"prerelease":false,"generate_release_notes":true}'
 
 
-name: Auto merge PR and create tag after approval
+name: Auto merge PR and create tag
 on:
   pull_request_review:
     types:
@@ -121,7 +121,7 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v2
 
-      - name: Merge Pull Request
+      - name: Merge Pull Request and create tag
         if: success()
         env:
           PR_NUMBER: ${{ github.event.pull_request.number }}
@@ -136,7 +136,7 @@ jobs:
           -H "Accept: application/vnd.github+json" \
           -H "Authorization: Bearer $GIT_TOKEN" \
           -H "X-GitHub-Api-Version: 2022-11-28" \
-          https://api.github.com/repos/MangeshBangaleOrg/Test/pulls/$PR_NUMBER/merge \
+          https://api.github.com/repos/${{ github.repository }}/pulls/$PR_NUMBER/merge \
           -d '{"commit_title":"Expand enum","commit_message":"Add a new value to the merge_method enum","merge_method":"merge"}'
           TAG_NAME="v$(echo $PR_TITLE | grep -oP '\d+\.\d+\.\d+')"
           git tag $TAG_NAME
