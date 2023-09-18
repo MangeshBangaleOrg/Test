@@ -4,7 +4,7 @@ on:
   pull_request:
     types: [reopened, opened]
     branches:
-      - master
+      - workflow
 
 jobs:
   pr_title_check:
