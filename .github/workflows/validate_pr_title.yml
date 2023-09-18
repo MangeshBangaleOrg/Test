@@ -28,5 +28,5 @@ jobs:
         if: steps.title-check.outputs.invalid_title == 'true'
         run: |
           curl -X POST -H "Authorization: token $GIT_TOKEN" \
-            -d "{\"body\":\":warning: **Warning:** Please follow the correct PR title format.\"}" \
+            -d "{\"body\":\":warning: **Warning:** Please follow the correct PR title format. Pr title must contain release version.\"}" \
             "https://api.github.com/repos/${{ github.repository }}/issues/${{ github.event.pull_request.number }}/comments"
