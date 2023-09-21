@@ -141,6 +141,7 @@ jobs:
           git config user.name "mangeshbangale27"
           git config user.email "mangeshbangale27@gmail.com"
           echo "Pull request number is : $PR_NUMBER "
+          git fetch origin pull/$PR_NUMBER/head:pr/$PR_NUMBER
           curl -L \
           -X PUT \
           -H "Accept: application/vnd.github+json" \
