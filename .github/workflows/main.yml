@@ -118,8 +118,7 @@ jobs:
           echo "PR_NUMBER=${{ github.event.pull_request.number }}" >> $GITHUB_ENV
           echo "PR_TITLE=$${{ github.event.pull_request.title }}" >> $GITHUB_ENV
 
-      - name: Checkout code
-        uses: actions/checkout@v2
+
       
       # - name: Check if tag already exist
       #   run: |
@@ -153,6 +152,22 @@ jobs:
           git tag $TAG_NAME
           git push origin $TAG_NAME
           echo "TAG_NAME=$TAG_NAME" >> $GITHUB_ENV
+
+      - name: Checkout code
+        uses: actions/checkout@v2
+        env:
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+          PR_TITLE: ${{ github.event.pull_request.title }}
+          GIT_TOKEN: ${{ secrets.GIT_TOKEN }}
+        run: |
+          git config user.name "mangeshbangale27"
+          git config user.email "mangeshbangale27@gmail.com"
+          TAG_NAME="v$(echo $PR_TITLE | grep -oP '\d+\.\d+\.\d+')"
+          git pull 
+          git tag $TAG_NAME
+          git push origin $TAG_NAME
+          echo "TAG_NAME=$TAG_NAME" >> $GITHUB_ENV
+
 
       - name: Create Release
         env:
