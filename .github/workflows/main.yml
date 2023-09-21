@@ -126,6 +126,7 @@ jobs:
           NEW_TAG=$(cat RELEASE.md | grep -oP 'v\d+\.\d+\.\d+')
           echo "NEW TAG is $NEW_TAG"
           if [ $(git tag -l "$NEW_TAG") ]; then
+            echo "tag is already present"
             exit 1
           fi
 
