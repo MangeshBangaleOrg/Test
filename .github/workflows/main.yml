@@ -160,9 +160,9 @@ jobs:
           echo sha is $sha
           git checkout $sha
           TAG_NAME="v$(echo $PR_TITLE | grep -oP '\d+\.\d+\.\d+')"
-          # git tag $TAG_NAME $sha
-          # git push origin $TAG_NAME
-          # echo "TAG_NAME=$TAG_NAME" >> $GITHUB_ENV
+          git tag $TAG_NAME $sha
+          git push origin $TAG_NAME
+          echo "TAG_NAME=$TAG_NAME" >> $GITHUB_ENV
 
       # - name: Create Release
       #   env:
