@@ -123,9 +123,10 @@ jobs:
       
       - name: Check if tag already exist
         run: |
-          if git rev-parse --quiet --verify "refs/tags/v1.11.1" > /dev/null; then
-          echo "Tag v1.11.1 already exists."
-          exit 1
+          git fetch --tags
+          if git tag --list "v1.11.1"; then
+            echo "Tag v1.11.1 already exists."
+            exit 1
           fi
 
 
