@@ -125,8 +125,7 @@ jobs:
         run: |
           NEW_TAG=$(cat RELEASE.md | grep -oP 'v\d+\.\d+\.\d+')
           echo "NEW TAG is $NEW_TAG"
-          if git rev-parse --verify refs/tags/"v1.1.12"; then
-            echo "Tag v1.1.12 already exists."
+          if [ $(git tag -l "$NEW_TAG") ]; then
             exit 1
           fi
 
