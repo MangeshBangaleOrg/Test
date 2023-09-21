@@ -124,8 +124,8 @@ jobs:
       - name: Check if tag already exist
         run: |
           git fetch --tags
-          if git tag --list "v1.119.1"; then
-            echo "Tag v1.11.1 already exists."
+          if if git show-ref --tags | grep -q "refs/tags/v1.21.32"; then
+            echo "Tag vv1.21.32 already exists."
             exit 1
           fi
 
