@@ -123,7 +123,6 @@ jobs:
       
       - name: Check if tag already exist
         run: |
-          git fetch --tags
           if git tag --list "v1.11.1"; then
             echo "Tag v1.11.1 already exists."
             exit 1
