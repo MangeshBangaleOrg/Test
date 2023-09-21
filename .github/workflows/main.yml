@@ -123,7 +123,8 @@ jobs:
       
       - name: Check if tag already exist
         run: |
-          cat RELEASE.md
+          NEW_TAG=$(cat RELEASE.md | grep -oP 'v\d+\.\d+\.\d+')
+          echo "NEW TAG is $NEW_TAG"
           git fetch --tags
           if git show-ref --tags --verify --quiet "refs/tags/1.1.12"; then
             echo "Tag v1.1.12 already exists."
