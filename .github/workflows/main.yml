@@ -144,6 +144,7 @@ jobs:
           echo "Pull request number is : $PR_NUMBER "
           echo "Current branch is $GITHUB_REF"
           echo "base branch is ${{ github.event.pull_request.base.ref }}"
+          git checkout ${{ github.event.pull_request.base.ref }}"
           git fetch origin pull/$PR_NUMBER/head:pr/$PR_NUMBER
           # git checkout $BASE
           # git merge --no-ff --no-edit pr/$PR_NUMBER
