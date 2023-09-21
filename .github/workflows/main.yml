@@ -128,7 +128,8 @@ jobs:
       #       echo "tag is already present"
       #       exit 1
       #     fi
-
+      - name: Checkout code
+        uses: actions/checkout@v2
 
       - name: Merge Pull Request and create tag
         if: success()
