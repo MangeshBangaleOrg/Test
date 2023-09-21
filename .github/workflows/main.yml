@@ -158,9 +158,9 @@ jobs:
           -d '{"commit_title":"Expand enum","commit_message":"Add a new value to the merge_method enum","merge_method":"merge"}'
           sha=$(git rev-parse HEAD)
           echo sha is $sha
-          # TAG_NAME="v$(echo $PR_TITLE | grep -oP '\d+\.\d+\.\d+')"
-          # git checkout $BASE
-          # git tag $TAG_NAME $BASE
+          git checkout $sha
+          TAG_NAME="v$(echo $PR_TITLE | grep -oP '\d+\.\d+\.\d+')"
+          # git tag $TAG_NAME $sha
           # git push origin $TAG_NAME
           # echo "TAG_NAME=$TAG_NAME" >> $GITHUB_ENV
 
