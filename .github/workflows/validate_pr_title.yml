@@ -17,7 +17,7 @@ jobs:
           GIT_TOKEN: ${{ secrets.GIT_TOKEN }}
         id: title-check
         run: |
-          TITLE_REGEX="\d+\.\d+\.\d+"
+          TITLE_REGEX="Release v\d+\.\d+\.\d+"
           if [[ ! "$PR_TITLE" =~ $TITLE_REGEX ]]; then
             echo "::set-output name=invalid_title::true"
             echo "VALID_TITLE=false" >> $GITHUB_ENV

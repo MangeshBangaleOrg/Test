@@ -120,6 +120,14 @@ jobs:
 
       - name: Checkout code
         uses: actions/checkout@v2
+      
+      - name: Check if tag already exist
+        run: |
+            git config user.name "mangeshbangale27"
+            git config user.email "mangeshbangale27@gmail.com"
+            if git rev-parse --quiet --verify "refs/tags/v1.11.1"; then
+            echo "v1.11.1 already exist"
+            exit 1
 
       - name: Merge Pull Request and create tag
         if: success()
