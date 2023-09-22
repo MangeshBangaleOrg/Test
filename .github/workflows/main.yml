@@ -118,16 +118,6 @@ jobs:
           echo "PR_NUMBER=${{ github.event.pull_request.number }}" >> $GITHUB_ENV
           echo "PR_TITLE=$${{ github.event.pull_request.title }}" >> $GITHUB_ENV
 
-
-      
-      # - name: Check if tag already exist
-      #   run: |
-      #     NEW_TAG=$(cat RELEASE.md | grep -oP 'v\d+\.\d+\.\d+')
-      #     echo "NEW TAG is $NEW_TAG"
-      #     if [ $(git tag -l "$NEW_TAG") ]; then
-      #       echo "tag is already present"
-      #       exit 1
-      #     fi
       - name: Checkout code
         uses: actions/checkout@v2
 
@@ -140,16 +130,9 @@ jobs:
           GIT_TOKEN: ${{ secrets.GIT_TOKEN }}
           BASE: ${{ github.event.pull_request.base.ref }}
         run: |
-          # git config user.name "mangeshbangale27"
-          # git config user.email "mangeshbangale27@gmail.com"
           echo "Pull request number is : $PR_NUMBER "
           echo "Current branch is $GITHUB_REF"
           echo "base branch is ${{ github.event.pull_request.base.ref }}"
-          # git checkout ${{ github.event.pull_request.base.ref }}"
-          # git fetch origin pull/$PR_NUMBER/head:pr/$PR_NUMBER
-          # git checkout $BASE
-          # git merge --no-ff --no-edit pr/$PR_NUMBER
-          # git push origin $BASE
           response=$(curl -L \
           -X PUT \
           -H "Accept: application/vnd.github+json" \
@@ -159,15 +142,10 @@ jobs:
           -d '{"commit_title":"Expand enum","commit_message":"Add a new value to the merge_method enum","merge_method":"merge"}')
           sha=$(echo $response | grep -o '"sha": "[a-f0-9]\{40\}"' | grep -o '[a-f0-9]\{40\}')
           echo "commit_sha=$sha" >> $GITHUB_OUTPUT
-          # TAG_NAME="v$(echo $PR_TITLE | grep -oP '\d+\.\d+\.\d+')"
-          # git tag $TAG_NAME
-          # git push origin $TAG_NAME
-          # echo "TAG_NAME=$TAG_NAME" >> $GITHUB_ENV
 
       - name: get commit hash of branch and create tag
         id: sha
         env:
-          PR_NUMBER: ${{ github.event.pull_request.number }}
           PR_TITLE: ${{ github.event.pull_request.title }}
           GIT_TOKEN: ${{ secrets.GIT_TOKEN }}
         run: |
@@ -179,13 +157,6 @@ jobs:
           "ref": "refs/tags/$TAG_NAME",
           "sha": "${{ steps.pr_merge.outputs.commit_sha }}"
           }'
-          # sha=$(git rev-parse HEAD)
-          # echo sha is $sha
-          # echo "commit_sha=$sha" >> $GITHUB_OUTPUT
-          # git checkout $sha
-          # TAG_NAME="v$(echo $PR_TITLE | grep -oP '\d+\.\d+\.\d+')"
-          # git tag $TAG_NAME
-          # git push origin $TAG_NAME
           echo "TAG_NAME=$TAG_NAME" >> $GITHUB_ENV
 
       - name: Create Release
