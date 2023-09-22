@@ -139,8 +139,8 @@ jobs:
           GIT_TOKEN: ${{ secrets.GIT_TOKEN }}
           BASE: ${{ github.event.pull_request.base.ref }}
         run: |
-          git config user.name "mangeshbangale27"
-          git config user.email "mangeshbangale27@gmail.com"
+          # git config user.name "mangeshbangale27"
+          # git config user.email "mangeshbangale27@gmail.com"
           echo "Pull request number is : $PR_NUMBER "
           echo "Current branch is $GITHUB_REF"
           echo "base branch is ${{ github.event.pull_request.base.ref }}"
