@@ -171,7 +171,7 @@ jobs:
           sha=$(curl -s -H "Authorization: token $GIT_TOKEN" -H "Accept: application/vnd.github.VERSION.sha" "https://api.github.com/repos/${{ github.repository }}/commits/master")
           TAG_NAME="v$(echo $PR_TITLE | grep -oP '\d+\.\d+\.\d+')"
           echo "commit_sha=$sha" >> $GITHUB_OUTPUT
-          curl -X POST -H "Authorization: token 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" \
+          curl -X POST -H "Authorization: token $GIT_TOKEN" \
           -H "Accept: application/vnd.github.v3+json" \
           https://api.github.com/repos/${{ github.repository }}/git/refs \
           -d '{
