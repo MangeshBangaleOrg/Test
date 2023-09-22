@@ -19,8 +19,7 @@ jobs:
         run: |
           TITLE_REGEX="Release v[0-9]\.[0-9]\.[0-9]"
           if [[ ! "$PR_TITLE" =~ $TITLE_REGEX ]]; then
-            echo "::set-output name=invalid_title::true"
-            echo "VALID_TITLE=false" >> $GITHUB_ENV
+            echo "invalid_title=true" >> $GITHUB_OUTPUT
           fi
       - name: Send Warning Comment
         env:
