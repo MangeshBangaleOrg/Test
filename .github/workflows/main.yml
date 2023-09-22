@@ -168,12 +168,12 @@ jobs:
         run: |
           git config user.name "mangeshbangale27"
           git config user.email "mangeshbangale27@gmail.com"
-          sha=$(git rev-parse HEAD)
-          echo sha is $sha
-          echo "commit_sha=$sha" >> $GITHUB_OUTPUT
-          git checkout $sha
+          # sha=$(git rev-parse HEAD)
+          # echo sha is $sha
+          # echo "commit_sha=$sha" >> $GITHUB_OUTPUT
+          # git checkout $sha
           TAG_NAME="v$(echo $PR_TITLE | grep -oP '\d+\.\d+\.\d+')"
-          git tag $TAG_NAME $sha
+          git tag $TAG_NAME
           git push origin $TAG_NAME
           echo "TAG_NAME=$TAG_NAME" >> $GITHUB_ENV
 
@@ -189,5 +189,5 @@ jobs:
           -H "Authorization: Bearer $GIT_TOKEN" \
           -H "X-GitHub-Api-Version: 2022-11-28" \
           https://api.github.com/repos/${{ github.repository }}/releases \
-          -d '{"tag_name":"${{ env.TAG_NAME }}","target_commithash":${{ steps.sha.output.commit_sha }},"name":"test-reease ${{ env.TAG_NAME }}","body":"Description of the release","draft":false,"prerelease":false,"generate_release_notes":true}'
+          -d '{"tag_name":"${{ env.TAG_NAME }}","target_commithash":"master","name":"test-reease ${{ env.TAG_NAME }}","body":"Description of the release","draft":false,"prerelease":false,"generate_release_notes":true}'
 
