@@ -22,20 +22,32 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v2
 
-      - name: get previous tag
-        id: old_tag
+
+      - name: read tag from release.md
+        id: get_tag
+        run : |
+          new_tag=$(cat RELEASE.md|  grep -oP '\d+\.\d+\.\d+' | head -n 1)
+      - name: get if tag is already present 
+        # id: old_tag
         run: |
-          git config user.name "mangeshbangale27"
-          git config user.email "mangeshbangale27@gmail.com"
-          previous_tag_sha=$(git rev-list --tags --max-count=1)
-          echo "previous tag SHA: $previous_tag_sha"
-          response=$(curl -L \
-            -H "Accept: application/vnd.github+json" \
-            -H "Authorization: Bearer ${{ steps.data.outputs.GIT_TOKEN }}" \
-            -H "X-GitHub-Api-Version: 2022-11-28" \
-            https://api.github.com/repos/${{ github.repository }}/git/tags/$previous_tag_sha)
-          previous_tag=$(echo $response | grep -Po '"tag": "\K[^"]+')
-          echo " previous tag is : $previous_tag"
+          TAG_NAME=$(cat RELEASE.md|  grep -oP 'v\d+\.\d+\.\d+' | head -n 1)
+          response_code=$(curl -s -o /dev/null -w "%{http_code}" -H "Accept: application/vnd.github.v3+json" https://api.github.com/repos/${{ github.repository }}/git/refs/tags/$TAG_NAME)
+          if [ "$response_code" = "200" ]; then
+            echo "Tag $TAG_NAME already exists."
+            exit 1
+          fi
+          echo "TAG_NAME=$TAG_NAME" >> $GITHUB_OUTPUT
+          # git config user.name "mangeshbangale27"
+          # git config user.email "mangeshbangale27@gmail.com"
+          # previous_tag_sha=$(git rev-list --tags --max-count=1)
+          # echo "previous tag SHA: $previous_tag_sha"
+          # response=$(curl -L \
+          #   -H "Accept: application/vnd.github+json" \
+          #   -H "Authorization: Bearer ${{ steps.data.outputs.GIT_TOKEN }}" \
+          #   -H "X-GitHub-Api-Version: 2022-11-28" \
+          #   https://api.github.com/repos/${{ github.repository }}/git/tags/$previous_tag_sha)
+          # previous_tag=$(echo $response | grep -Po '"tag": "\K[^"]+')
+          # echo " previous tag is : $previous_tag"
 
       - name: Merge Pull Request and create tag
         id: pr_merge
@@ -56,15 +68,15 @@ jobs:
       - name: create tag
         id: tag
         run: |
-          TAG_NAME="v$(echo ${{ steps.data.outputs.PR_TITLE }} | grep -oP '\d+\.\d+\.\d+')"
+          # TAG_NAME="v$(echo ${{ steps.data.outputs.PR_TITLE }} | grep -oP '\d+\.\d+\.\d+')"
           curl -X POST -H "Authorization: token ${{ steps.data.outputs.GIT_TOKEN }}" \
           -H "Accept: application/vnd.github.v3+json" \
           https://api.github.com/repos/${{ github.repository }}/git/refs \
           -d '{
-          "ref": "refs/tags/$TAG_NAME",
+          "ref": "refs/tags/${{ steps.get_tag.outputs.TAG_NAME }}",
           "sha": "${{ steps.pr_merge.outputs.commit_sha }}"
           }'
-          echo "TAG_NAME=$TAG_NAME" >> $GITHUB_OUTPUT
+          # echo "TAG_NAME=$TAG_NAME" >> $GITHUB_OUTPUT
 
       - name: Create Release
         id: create-release
@@ -76,6 +88,6 @@ jobs:
           -H "Authorization: Bearer ${{ steps.data.outputs.GIT_TOKEN }}" \
           -H "X-GitHub-Api-Version: 2022-11-28" \
           https://api.github.com/repos/${{ github.repository }}/releases \
-          -d '{"tag_name":"${{ steps.tag.outputs.TAG_NAME }}","target_commithash":"${{ steps.pr_merge.outputs.commit_sha }}","name":"test-reease ${{ steps.tag.outputs.TAG_NAME }}","body":"Description of the release","draft":false,"prerelease":false,"generate_release_notes":true}'
+          -d '{"tag_name":"${{ steps.get_tag.outputs.TAG_NAME }}","target_commithash":"${{ steps.pr_merge.outputs.commit_sha }}","name":"test-reease ${{ steps.get_tag.outputs.TAG_NAME }}","body":"Description of the release","draft":false,"prerelease":false,"generate_release_notes":true}'
 
 
