@@ -196,3 +196,4 @@ jobs:
           https://api.github.com/repos/${{ github.repository }}/releases \
           -d '{"tag_name":"${{ env.TAG_NAME }}","target_commithash":"master","name":"test-reease ${{ env.TAG_NAME }}","body":"Description of the release","draft":false,"prerelease":false,"generate_release_notes":true}'
 
+
