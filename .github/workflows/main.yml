@@ -170,7 +170,7 @@ jobs:
           git config user.email "mangeshbangale27@gmail.com"
           sha=$(git rev-parse HEAD)
           echo sha is $sha
-          echo "commit_sha=$sha >> $GITHUB_OUTPUT
+          echo "commit_sha=$sha" >> $GITHUB_OUTPUT
           git checkout $sha
           TAG_NAME="v$(echo $PR_TITLE | grep -oP '\d+\.\d+\.\d+')"
           git tag $TAG_NAME $sha
