@@ -26,7 +26,12 @@ jobs:
         id: pr_merge
         if: success()
         run: |
+          git config user.name "mangeshbangale27"
+          git config user.email "mangeshbangale27@gmail.com"
           echo "Pull request number is : ${{ steps.data.outputs.PR_NUMBER }} "
+          previous_tag_sha=$(git rev-parse HEAD)
+          previous_tag=$(git describe --tags $previous_tag_sha --abbrev=0)
+          echo " previous tag name is: $previous_tag_sha"
           response=$(curl -L \
           -X PUT \
           -H "Accept: application/vnd.github+json" \
