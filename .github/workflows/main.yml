@@ -27,7 +27,7 @@ jobs:
         run: |
           git config user.name "mangeshbangale27"
           git config user.email "mangeshbangale27@gmail.com"
-          previous_tag_sha=$(git rev-parse HEAD)
+          previous_tag_sha=$(git rev-list --tags --max-count=1)
           echo "previous tag SHA: $previous_tag_sha"
           response=$(curl -L \
             -H "Accept: application/vnd.github+json" \
