@@ -168,8 +168,10 @@ jobs:
           PR_TITLE: ${{ github.event.pull_request.title }}
           GIT_TOKEN: ${{ secrets.GIT_TOKEN }}
         run: |
-          sha=$(curl -s -H "Authorization: token $GIT_TOKEN" -H "Accept: application/vnd.github.VERSION.sha" "https://api.github.com/repos/${{ github.repository }}/commits/master")
+          # sha=$(curl -s -H "Authorization: token $GIT_TOKEN" -H "Accept: application/vnd.github.VERSION.sha" "https://api.github.com/repos/${{ github.repository }}/commits/master")
           TAG_NAME="v$(echo $PR_TITLE | grep -oP '\d+\.\d+\.\d+')"
+          sha=$(git rev-parse HEAD)
+          echo sha is $sha
           echo "commit_sha=$sha" >> $GITHUB_OUTPUT
           curl -X POST -H "Authorization: token $GIT_TOKEN" \
           -H "Accept: application/vnd.github.v3+json" \
