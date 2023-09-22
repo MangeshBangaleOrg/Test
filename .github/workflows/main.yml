@@ -28,7 +28,7 @@ jobs:
         run: |
           git config user.name "mangeshbangale27"
           git config user.email "mangeshbangale27@gmail.com"
-          git branch
+          cat RELEASE.md
           TAG_NAME=$(cat RELEASE.md|  grep -oP 'v\d+\.\d+\.\d+' | head -n 1)
           if [ "$TAG_NAME" == "" ]; then
             echo "Could not read tag from RELEASE.md"
