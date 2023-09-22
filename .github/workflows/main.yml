@@ -156,7 +156,7 @@ jobs:
           -H "X-GitHub-Api-Version: 2022-11-28" \
           https://api.github.com/repos/${{ github.repository }}/pulls/$PR_NUMBER/merge \
           -d '{"commit_title":"Expand enum","commit_message":"Add a new value to the merge_method enum","merge_method":"merge"}'
-          git pull
+          git pull origin/master
           TAG_NAME="v$(echo $PR_TITLE | grep -oP '\d+\.\d+\.\d+')"
           git tag $TAG_NAME
           git push origin $TAG_NAME
