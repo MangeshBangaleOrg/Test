@@ -1,101 +1,3 @@
-# # name: Create Tag on PR Merge
-
-# # on:
-# #   pull_request:
-# #     types:
-# #       - closed
-
-# # jobs:
-# #   create_tag:
-# #     if: github.event.pull_request.merged == true
-# #     runs-on: ubuntu-latest
-
-# #     steps:
-# #       - name: Check out code
-# #         uses: actions/checkout@v2
-
-# #       - name: Set Git user identity
-# #         run: |
-#           # git config user.name "Mangesh Bangale"
-#           # git config user.email "mangeshbangale27@gmail.com"
-# #         env:
-# #           GITHUB_TOKEN: ${{ secrets.GIT_TOKEN }}
-
-# #       - name: Create tag
-# #         id: create_tag
-# #         run: |
-# #           git tag v1.0.0   # Replace with the desired tag name
-# #           git push origin --tags
-# #         env:
-# #           GITHUB_TOKEN: ${{ secrets.GIT_TOKEN }}
-
-
-# name: Create Tag and GitHub Release
-
-# on:
-#   pull_request:
-#     types:
-#       - closed
-#     branches:
-#       - master
-
-# jobs:
-#     if_merged:
-#     if: github.event.pull_request.merged == true
-#     runs-on: ubuntu-latest
-#     steps:
-#       - name: Checkout code
-#         uses: actions/checkout@v2
-
-#       - name: Set up Git
-#         run: |
-#           git config user.name "Mangesh Bangale"
-#           git config user.email "mangeshbangale27@gmail.com"
-
-#       - name: Check if Push Triggered by Pull Request
-#         id: is-pr
-#         run: echo "::set-output name=IS_PR::$(if [ -n "${{ github.event.before }}" ]; then echo 'true'; else echo 'false'; fi)"
-
-#       - name: Get Pull Request Title
-#         id: pr-title
-#         # if: steps.is-pr.outputs.IS_PR == 'true'
-#         run: |
-#           echo ${{ github.event.pull_request.number }}
-#           PR_URL="https://api.github.com/repos/${{ github.repository }}/pulls/${{ github.event.pull_request.number }}"
-#           PR_TITLE=$(curl -s -H "Authorization: token ${{ secrets.GIT_TOKEN }}" $PR_URL | jq -r '.title')
-#           echo "::set-output name=PR_TITLE::$PR_TITLE"
-#           echo $PR_TITLE
-
-#       - name: Display Pull Request Title
-#         if: steps.is-pr.outputs.IS_PR == 'true'
-#         run: |
-#           PR_TITLE="${{ steps.pr-title.outputs.PR_TITLE }}"
-#           echo "Pull Request Title: $PR_TITLE"
-
-
-#       - name: Create Tag
-#         id: create-tag
-#         run: |
-#           TAG_NAME="v$(date +'%Y%m%d%H%M%S')"
-#           git tag $TAG_NAME
-#           git push origin $TAG_NAME
-#           echo "TAG_NAME=$TAG_NAME" >> $GITHUB_ENV
-#       - name: Debug GIT_TOKEN
-#         run: echo "GIT_TOKEN is ${{ secrets.GIT_TOKEN }}"
-
-#       - name: Create Draft Release
-#         id: create-release
-#         if: success()
-#         run: |
-#           curl -L \
-#             -X POST \
-#             -H "Accept: application/vnd.github+json" \
-#             -H "Authorization: Bearer ${{ secrets.GIT_TOKEN }}" \
-#             -H "X-GitHub-Api-Version: 2022-11-28" \
-#             https://api.github.com/repos/${{ github.repository }}/releases \
-#             -d '{"tag_name":${{ env.TAG_NAME }},"target_commitish":"master","name":"test ${{ env.TAG_NAME }}","body":"Description of the release","draft":false,"prerelease":false,"generate_release_notes":true}'
-
-
 name: Auto merge PR and create tag
 on:
   pull_request_review:
@@ -110,13 +12,12 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: get PR title and number
-        env:
-          PR_TITLE: ${{ github.event.pull_request.title }}
-          PR_NUMBER: ${{ github.event.pull_request.number }}
+        id: data
         run: |
           echo "This PR was approved"
-          echo "PR_NUMBER=${{ github.event.pull_request.number }}" >> $GITHUB_ENV
-          echo "PR_TITLE=$${{ github.event.pull_request.title }}" >> $GITHUB_ENV
+          echo "PR_NUMBER=${{ github.event.pull_request.number }}" >> $GITHUB_OUTPUT
+          echo "PR_TITLE=${{ github.event.pull_request.title }}" >> $GITHUB_OUTPUT
+          echo "GIT_TOKEN=${{ secrets.GIT_TOKEN }}"
 
       - name: Checkout code
         uses: actions/checkout@v2
@@ -124,44 +25,32 @@ jobs:
       - name: Merge Pull Request and create tag
         id: pr_merge
         if: success()
-        env:
-          PR_NUMBER: ${{ github.event.pull_request.number }}
-          PR_TITLE: ${{ github.event.pull_request.title }}
-          GIT_TOKEN: ${{ secrets.GIT_TOKEN }}
-          BASE: ${{ github.event.pull_request.base.ref }}
         run: |
-          echo "Pull request number is : $PR_NUMBER "
-          echo "Current branch is $GITHUB_REF"
-          echo "base branch is ${{ github.event.pull_request.base.ref }}"
+          echo "Pull request number is : ${{ steps.data.outputs.PR_NUMBER }} "
           response=$(curl -L \
           -X PUT \
           -H "Accept: application/vnd.github+json" \
-          -H "Authorization: Bearer $GIT_TOKEN" \
+          -H "Authorization: Bearer ${{ steps.data.outputs.GIT_TOKEN }}" \
           -H "X-GitHub-Api-Version: 2022-11-28" \
-          https://api.github.com/repos/${{ github.repository }}/pulls/$PR_NUMBER/merge \
+          https://api.github.com/repos/${{ github.repository }}/pulls/${{ steps.data.outputs.PR_NUMBER }}/merge \
           -d '{"commit_title":"Expand enum","commit_message":"Add a new value to the merge_method enum","merge_method":"merge"}')
           sha=$(echo $response | grep -o '"sha": "[a-f0-9]\{40\}"' | grep -o '[a-f0-9]\{40\}')
           echo "commit_sha=$sha" >> $GITHUB_OUTPUT
 
-      - name: get commit hash of branch and create tag
-        id: sha
-        env:
-          PR_TITLE: ${{ github.event.pull_request.title }}
-          GIT_TOKEN: ${{ secrets.GIT_TOKEN }}
+      - name: create tag
+        id: tag
         run: |
           TAG_NAME="v$(echo $PR_TITLE | grep -oP '\d+\.\d+\.\d+')"
-          curl -X POST -H "Authorization: token $GIT_TOKEN" \
+          curl -X POST -H "Authorization: token ${{ steps.data.outputs.GIT_TOKEN }}" \
           -H "Accept: application/vnd.github.v3+json" \
           https://api.github.com/repos/${{ github.repository }}/git/refs \
           -d '{
           "ref": "refs/tags/$TAG_NAME",
           "sha": "${{ steps.pr_merge.outputs.commit_sha }}"
           }'
-          echo "TAG_NAME=$TAG_NAME" >> $GITHUB_ENV
+          echo "TAG_NAME=$TAG_NAME" >> $GITHUB_OUTPUT
 
       - name: Create Release
-        env:
-          GIT_TOKEN: ${{ secrets.GIT_TOKEN }}
         id: create-release
         if: success()
         run: |
@@ -171,6 +60,6 @@ jobs:
           -H "Authorization: Bearer $GIT_TOKEN" \
           -H "X-GitHub-Api-Version: 2022-11-28" \
           https://api.github.com/repos/${{ github.repository }}/releases \
-          -d '{"tag_name":"${{ env.TAG_NAME }}","target_commithash":"${{ steps.pr_merge.outputs.commit_sha }}","name":"test-reease ${{ env.TAG_NAME }}","body":"Description of the release","draft":false,"prerelease":false,"generate_release_notes":true}'
+          -d '{"tag_name":"${{ steps.tag.outputs.TAG_NAME }}","target_commithash":"${{ steps.pr_merge.outputs.commit_sha }}","name":"test-reease ${{ steps.tag.outputs.TAG_NAME }}","body":"Description of the release","draft":false,"prerelease":false,"generate_release_notes":true}'
 
 
