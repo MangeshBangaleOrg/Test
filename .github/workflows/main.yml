@@ -22,16 +22,26 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v2
 
+      - name: get previous tag
+        id: old_tag
+        run: |
+          git config user.name "mangeshbangale27"
+          git config user.email "mangeshbangale27@gmail.com"
+          previous_tag_sha=$(git rev-parse HEAD)
+          echo "previous tag SHA: $previous_tag_sha"
+          response=$(curl -L \
+            -H "Accept: application/vnd.github+json" \
+            -H "Authorization: Bearer ${{ steps.data.outputs.GIT_TOKEN }}" \
+            -H "X-GitHub-Api-Version: 2022-11-28" \
+            https://api.github.com/repos/${{ github.repository }}/git/tags/$previous_tag_sha)
+          previous_tag=$(echo $response | grep -Po '"tag": "\K[^"]+')
+          echo " previous tag is : $previous_tag"
+
       - name: Merge Pull Request and create tag
         id: pr_merge
         if: success()
         run: |
-          git config user.name "mangeshbangale27"
-          git config user.email "mangeshbangale27@gmail.com"
           echo "Pull request number is : ${{ steps.data.outputs.PR_NUMBER }} "
-          previous_tag_sha=$(git rev-parse HEAD)
-          echo "previous tag SHA: $previous_tag_sha"
-          previous_tag=$(git describe --tags $previous_tag_sha --abbrev=0)
           echo " previous tag name is: $previous_tag_sha"
           response=$(curl -L \
           -X PUT \
