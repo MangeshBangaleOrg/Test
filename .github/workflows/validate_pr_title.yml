@@ -7,7 +7,6 @@ on:
       - master
       - 'workflow/**'
 
-
 jobs:
   pr_title_check:
     runs-on: ubuntu-latest
