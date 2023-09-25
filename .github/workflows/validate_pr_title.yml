@@ -2,8 +2,11 @@ name: PR Title Check
 
 on:
   pull_request:
+    types: [opened, reopened]
     branches:
-      - workflow
+      - master
+      - 'workflow/**'
+
 
 jobs:
   pr_title_check:
