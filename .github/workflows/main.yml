@@ -26,6 +26,7 @@ jobs:
       - name: verify if presious release tag is created
         id: old_tag
         run: |
+          cat RELEASE.md
           OLD_TAG=$(cat RELEASE.md | grep -oP 'v\d+\.\d+\.\d+' | head -n 1)
           echo "OLD_TAG=$OLD_TAG" >> $GITHUB_OUTPUT
           if [[ $OLD_TAG=="" ]]; then
