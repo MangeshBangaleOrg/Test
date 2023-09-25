@@ -17,15 +17,26 @@ jobs:
           GIT_TOKEN: ${{ secrets.GIT_TOKEN }}
         id: title-check
         run: |
-          TITLE_REGEX="Release v[0-9]\.[0-9]\.[0-9]"
-          if [[ ! "$PR_TITLE" =~ $TITLE_REGEX ]]; then
-            echo "invalid_title=true" >> $GITHUB_OUTPUT
+          if [[ ${{ github.event.pull_request.head.ref }} == "master" ]]; then
+            TITLE_REGEX="Release v[0-9]\.[0-9]\.[0-9]"
+            if [[ ! "$PR_TITLE" =~ $TITLE_REGEX ]]; then
+              echo "invalid_title=true" >> $GITHUB_OUTPUT
+              echo "warn_message="pull request title must contains Release vx.x.x." >> $GITHUB_OUTPUT
+            fi
+          elif [[ ${{ github.event.pull_request.head.ref }} == "release*" ]]; then
+            TITLE_REGEX="\[[A-Z/]+-[0-9]+\]\s*:\s*\[[A-Z]+\]"
+            TAGS="amstack\|sea\|msb\|ind\|thaidn\|kor\|kaz\|ana\|amer\|jpn\|eu\|ukr"
+            if [[ ! ($PR_TITLE =~ $TITLE_REGEX && $(echo  $PR_TITLE | grep -i $TAGS == "") ]]; then
+              echo "invalid_title=true" >> $GITHUB_OUTPUT
+              echo "warn_message="[please follow PR guidline](www.google.com)">> $GITHUB_OUTPUT
+            fi
           fi
+          
       - name: Send Warning Comment
         env:
           GIT_TOKEN: ${{ secrets.GIT_TOKEN }}
         if: steps.title-check.outputs.invalid_title == 'true'
         run: |
           curl -X POST -H "Authorization: token $GIT_TOKEN" \
-            -d "{\"body\":\":warning: **Warning:** pull request title must contains Release vx.x.x.\"}" \
+            -d "{\"body\":\":warning: **Warning:** ${{ steps.title-check.outputs.warn_message }}\"}" \
             "https://api.github.com/repos/${{ github.repository }}/issues/${{ github.event.pull_request.number }}/comments"
