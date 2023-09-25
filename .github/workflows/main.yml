@@ -44,11 +44,12 @@ jobs:
         id: get_tag
         run: |
             TAG_NAME=$(cat RELEASE.md | grep -oP 'v\d+\.\d+\.\d+' | head -n 1)
+            OLD_TAG=$(cat RELEASE.md | grep -oP -m 2 'v\d+\.\d+\.\d+' | tail -n 1)
             if [[ "$TAG_NAME" == "" ]]; then
               echo "could not read tag from RELEASE.md"
               exit 1
-            elif [[ ${{ steps.old_tag.outputs.OLD_TAG }}==$TAG_NAME ]]; then
-              echo "Tag is already exist in ${{ github.repository }} repo."
+            elif [[ "$OLD_TAG" == "$TAG_NAME" ]]; then
+              echo "Tag $TAG_NAME is already exist in ${{ github.repository }} repo."
               exit 1
             fi
             echo "TAG_NAME=$TAG_NAME" >> $GITHUB_OUTPUT
