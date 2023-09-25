@@ -6,6 +6,7 @@ on:
       - opened
     branches:
       - master
+      - workflow
 
 jobs:
   pr_title_check:
