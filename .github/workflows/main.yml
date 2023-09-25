@@ -23,7 +23,7 @@ jobs:
         uses: actions/checkout@v2
 
 
-      - name: verify if tag is already present 
+      - name: verify if previous tag is created or not
         id: get_tag
         run: |
           git config user.name "mangeshbangale27"
@@ -35,22 +35,21 @@ jobs:
             exit 1
           fi
           response_code=$(curl -s -o /dev/null -w "%{http_code}" -H "Accept: application/vnd.github.v3+json" https://api.github.com/repos/${{ github.repository }}/git/refs/tags/$TAG_NAME)
-          if [ "$response_code" = "200" ]; then
-            echo "Tag $TAG_NAME already exists."
+          if [ ! "$response_code" == "200" ]; then
+            echo "Tag $TAG_NAME is not present."
             exit 1
           fi
-          echo "TAG_NAME=$TAG_NAME" >> $GITHUB_OUTPUT
-          # git config user.name "mangeshbangale27"
-          # git config user.email "mangeshbangale27@gmail.com"
-          # previous_tag_sha=$(git rev-list --tags --max-count=1)
-          # echo "previous tag SHA: $previous_tag_sha"
-          # response=$(curl -L \
-          #   -H "Accept: application/vnd.github+json" \
-          #   -H "Authorization: Bearer ${{ steps.data.outputs.GIT_TOKEN }}" \
-          #   -H "X-GitHub-Api-Version: 2022-11-28" \
-          #   https://api.github.com/repos/${{ github.repository }}/git/tags/$previous_tag_sha)
-          # previous_tag=$(echo $response | grep -Po '"tag": "\K[^"]+')
-          # echo " previous tag is : $previous_tag"
+
+      - name: read current tag from RELEASE.md
+        id: get_tag
+        run: |
+            response=$(curl -H "Authorization: token ${{ steps.data.outputs.GIT_TOKEN }}" -H "Accept: application/vnd.github.v3.raw" "https://raw.githubusercontent.com/${{ github.repository }}/workflow/README.md")
+            TAG_NAME=$(echo $response | grep -oP 'v\d+\.\d+\.\d+' | head -n 1)
+            if [ $TAG_NAME == "" ]; then
+              echo "could not read tag from release.md"
+              exit 1
+            fi
+            echo "TAG_NAME=$TAG_NAME" >> $GITHUB_OUTPUT
 
       - name: Merge Pull Request and create tag
         id: pr_merge
