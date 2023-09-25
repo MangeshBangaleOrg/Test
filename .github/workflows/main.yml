@@ -27,7 +27,7 @@ jobs:
         id: old_tag
         run: |
           cat RELEASE.md
-          PREVSIOUS_RELEASE_TAG=$(cat RELEASE.md | grep -oP 'v\d+\.\d+\.\d+' | head -n 1)
+          PREVSIOUS_RELEASE_TAG=$(cat RELEASE.md | grep -oP -m 2 'v\d+\.\d+\.\d+' | tail -n 1)
           echo "PREVSIOUS_RELEASE_TAG is : $PREVSIOUS_RELEASE_TAG"
           echo "OLD_TAG=$PREVSIOUS_RELEASE_TAG" >> $GITHUB_OUTPUT
           if [[ "$PREVSIOUS_RELEASE_TAG" == "" ]]; then
@@ -43,8 +43,7 @@ jobs:
       - name: read current tag from RELEASE.md
         id: get_tag
         run: |
-            response=$(curl -H "Authorization: token ${{ steps.data.outputs.GIT_TOKEN }}" -H "Accept: application/vnd.github.v3.raw" "https://raw.githubusercontent.com/${{ github.repository }}/workflow/RELEASE.md")
-            TAG_NAME=$(echo $response | grep -oP 'v\d+\.\d+\.\d+' | head -n 1)
+            TAG_NAME=$(cat RELEASE.md | grep -oP 'v\d+\.\d+\.\d+' | head -n 1)
             if [[ "$TAG_NAME" == "" ]]; then
               echo "could not read tag from RELEASE.md"
               exit 1
