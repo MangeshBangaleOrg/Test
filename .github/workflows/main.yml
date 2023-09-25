@@ -26,13 +26,13 @@ jobs:
       - name: verify if presious release tag is created
         id: old_tag
         run: |
-          OLD_TAG=$(cat RELEASE.md|  grep -oP 'v\d+\.\d+\.\d+' | head -n 1)
+          OLD_TAG=$(cat RELEASE.md | grep -oP 'v\d+\.\d+\.\d+' | head -n 1)
           echo "OLD_TAG=$OLD_TAG" >> $GITHUB_OUTPUT
-          if [ "$OLD_TAG" == "" ]; then
+          if [ $OLD_TAG == "" ]; then
             echo "Could not read tag from RELEASE.md"
             exit 1
           fi
-          response_code=$(curl -s -o /dev/null -w "%{http_code}" -H "Accept: application/vnd.github.v3+json" https://api.github.com/repos/${{ github.repository }}/git/refs/tags/$TAG_NAME)
+          response_code=$(curl -s -o /dev/null -w "%{http_code}" -H "Accept: application/vnd.github.v3+json" https://api.github.com/repos/${{ github.repository }}/git/refs/tags/$OLD_TAG)
           if [ ! "$response_code" == "200" ]; then
             echo "Tag $OLD_TAG is not exists in ${{ github.repository }} repo."
             exit 1
