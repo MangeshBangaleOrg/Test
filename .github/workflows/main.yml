@@ -68,6 +68,7 @@ jobs:
 
       - name: create tag
         id: tag
+        if: success()
         run: |
           curl -X POST -H "Authorization: token ${{ steps.data.outputs.GIT_TOKEN }}" \
           -H "Accept: application/vnd.github.v3+json" \
