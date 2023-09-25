@@ -1,3 +1,4 @@
+Release v7.10.8
 Release v7.10.7
 Release v7.10.6
 Release v7.10.5
