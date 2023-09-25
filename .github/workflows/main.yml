@@ -46,7 +46,7 @@ jobs:
             if [ $TAG_NAME == "" ]; then
               echo "could not read tag from RELEASE.md"
               exit 1
-            elfi [[ ${{ steps.old_tag.outputs.OLD_TAG }} == $TAG_NAME ]]; then
+            elif [[ ${{ steps.old_tag.outputs.OLD_TAG }} == $TAG_NAME ]]; then
               echo "Tag is already exist in ${{ github.repository }} repo."
               exit 1
             fi
