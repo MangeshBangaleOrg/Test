@@ -42,7 +42,7 @@ jobs:
       - name: read current tag from RELEASE.md
         id: get_tag
         run: |
-            response=$(curl -H "Authorization: token ${{ steps.data.outputs.GIT_TOKEN }}" -H "Accept: application/vnd.github.v3.raw" "https://raw.githubusercontent.com/${{ github.repository }}/workflow/README.md")
+            response=$(curl -H "Authorization: token ${{ steps.data.outputs.GIT_TOKEN }}" -H "Accept: application/vnd.github.v3.raw" "https://raw.githubusercontent.com/${{ github.repository }}/workflow/RELEASE.md")
             TAG_NAME=$(echo $response | grep -oP 'v\d+\.\d+\.\d+' | head -n 1)
             if [[ $TAG_NAME=="" ]]; then
               echo "could not read tag from RELEASE.md"
