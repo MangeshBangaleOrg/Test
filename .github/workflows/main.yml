@@ -44,10 +44,12 @@ jobs:
         id: get_tag
         run: |
             TAG_NAME=$(cat RELEASE.md | grep -oP 'v\d+\.\d+\.\d+' | head -n 1)
+            echo "current yag is : $TAG_NAME"
             OLD_TAG=$(cat RELEASE.md | grep -oP -m 2 'v\d+\.\d+\.\d+' | tail -n 1)
+            echo "old tag is : $OLD_TAG"
             response_code=$(curl -s -o /dev/null -w "%{http_code}" -H "Accept: application/vnd.github.v3+json" https://api.github.com/repos/${{ github.repository }}/git/refs/tags/$TAG_NAME)
-            if [[ ! "$response_code" == "200" ]]; then
-              echo "Tag $TAG_NAME is not exists in ${{ github.repository }} repo."
+            if [[ "$response_code" == "200" ]]; then
+              echo "current tag $TAG_NAME is already exists in ${{ github.repository }} repo."
               exit 1
             fi
             if [[ "$TAG_NAME" == "" ]]; then
