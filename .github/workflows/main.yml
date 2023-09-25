@@ -69,7 +69,6 @@ jobs:
       - name: create tag
         id: tag
         run: |
-          # TAG_NAME="v$(echo ${{ steps.data.outputs.PR_TITLE }} | grep -oP '\d+\.\d+\.\d+')"
           curl -X POST -H "Authorization: token ${{ steps.data.outputs.GIT_TOKEN }}" \
           -H "Accept: application/vnd.github.v3+json" \
           https://api.github.com/repos/${{ github.repository }}/git/refs \
@@ -77,7 +76,6 @@ jobs:
           "ref": "refs/tags/${{ steps.get_tag.outputs.TAG_NAME }}",
           "sha": "${{ steps.pr_merge.outputs.commit_sha }}"
           }'
-          # echo "TAG_NAME=$TAG_NAME" >> $GITHUB_OUTPUT
 
       - name: Create Release
         id: create-release
