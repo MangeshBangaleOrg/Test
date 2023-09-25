@@ -23,13 +23,6 @@ jobs:
               echo "invalid_title=true" >> $GITHUB_OUTPUT
               echo "warn_message="pull request title must contains Release vx.x.x." >> $GITHUB_OUTPUT
             fi
-          elif [[ ${{ github.event.pull_request.head.ref }} == "release*" ]]; then
-            TITLE_REGEX="\[[A-Z/]+-[0-9]+\]\s*:\s*\[[A-Z]+\]"
-            TAGS="amstack\|sea\|msb\|ind\|thaidn\|kor\|kaz\|ana\|amer\|jpn\|eu\|ukr"
-            if [[ ! ($PR_TITLE =~ $TITLE_REGEX && $(echo  $PR_TITLE | grep -i $TAGS == "") ]]; then
-              echo "invalid_title=true" >> $GITHUB_OUTPUT
-              echo "warn_message="[please follow PR guidline](www.google.com)">> $GITHUB_OUTPUT
-            fi
           fi
           
       - name: Send Warning Comment
