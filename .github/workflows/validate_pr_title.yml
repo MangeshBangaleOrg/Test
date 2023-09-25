@@ -16,6 +16,7 @@ jobs:
         env:
           PR_TITLE: ${{ github.event.pull_request.title }}
           GIT_TOKEN: ${{ secrets.GIT_TOKEN }}
+          BRANCH_MATCHING: "workflow*"
         id: title-check
         run: |
           if [[ ${{ github.event.pull_request.base.ref }} == "release" ]]; then
@@ -24,7 +25,7 @@ jobs:
               echo "invalid_title=true" >> $GITHUB_OUTPUT
               echo "warn_message='pull request title must contains Release vx.x.x.'" >> $GITHUB_OUTPUT
             fi
-          elif [[ ${{ github.event.pull_request.base.ref }} == "master*" ]]; then
+          elif [[ ${{ github.event.pull_request.base.ref }} =~ $BRANCH_MATCHING ]]; then
             TITLE_REGEX="\[[A-Z/]+-[0-9]+\]\s*:\s*\[[A-Z]+\]"
             TAGS="amstack\|sea\|msb\|ind\|thaidn\|kor\|kaz\|ana\|amer\|jpn\|eu\|ukr"
             if [[ ! ($PR_TITLE =~ $TITLE_REGEX && $(echo  $PR_TITLE | grep -i $TAGS == "")) ]]; then
