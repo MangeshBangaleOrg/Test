@@ -24,7 +24,7 @@ jobs:
 
 
       - name: verify if presious tag and new release tag already present
-        id: old_tag
+        id: get_tag
         run: |
           cat RELEASE.md
           PREVSIOUS_RELEASE_TAG=$(cat RELEASE.md | grep -oP -m 2 'v\d+\.\d+\.\d+' | tail -n 1)
@@ -50,7 +50,7 @@ jobs:
               exit 1
           fi
           echo "TAG_NAME=$CURRENT_RELEASE_TAG" >> $GITHUB_OUTPUT
-          
+
       - name: Merge Pull Request and create tag
         id: pr_merge
         if: success()
