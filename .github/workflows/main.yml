@@ -27,7 +27,7 @@ jobs:
         id: old_tag
         run: |
           OLD_TAG=$(cat RELEASE.md|  grep -oP 'v\d+\.\d+\.\d+' | head -n 1)
-          echo "OLD_TAG=$OLD_TAG" >> >> $GITHUB_OUTPUT
+          echo "OLD_TAG=$OLD_TAG" >> $GITHUB_OUTPUT
           if [ "$OLD_TAG" == "" ]; then
             echo "Could not read tag from RELEASE.md"
             exit 1
@@ -48,6 +48,7 @@ jobs:
               exit 1
             elfi [[ ${{ steps.old_tag.outputs.OLD_TAG }} == $TAG_NAME ]]; then
               echo "Tag is already exist in ${{ github.repository }} repo."
+              exit 1
             fi
             echo "TAG_NAME=$TAG_NAME" >> $GITHUB_OUTPUT
 
