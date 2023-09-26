@@ -5,3 +5,4 @@ if [  $(git tag -l "$version") ]; then
 else
     echo no
 fi
+
