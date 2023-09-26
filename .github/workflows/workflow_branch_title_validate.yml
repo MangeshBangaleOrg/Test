@@ -1,0 +1,44 @@
+name: PR Title Check
+
+on:
+  pull_request:
+    types: [opened, reopened]
+    branches:
+      - workflow
+
+jobs:
+  pr_title_check:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check PR Title
+        env:
+          PR_TITLE: ${{ github.event.pull_request.title }}
+          GIT_TOKEN: ${{ secrets.GIT_TOKEN }}
+          BRANCH_MATCHING: "workflow*"
+        id: title-check
+        run: |
+          if [[ ${{ github.event.pull_request.base.ref }} == "workflow" ]]; then
+            TITLE_REGEX="[[A-Z]+-[0-9]+\]\s*:\s*\[[A-Z]+\]"
+            TAGS="amstack\|sea\|msb\|ind\|thaidn\|kor\|kaz\|ana\|amer\|jpn\|eu\|ukr"
+            if [[ $PR_TITLE =~ $TITLE_REGEX ]]; then
+                verify_tags=$(echo "$PR_TITLE" | grep -i $TAGS)
+                if [[ "$verify_tags" == "" ]]; then
+                  echo "valid"
+                else
+                  echo "invalid_title=true" >> $GITHUB_OUTPUT
+                  echo "warn_message='[please follow PR guidline](www.google.com)'" >> $GITHUB_OUTPUT
+                fi
+            else
+              echo "invalid_title=true" >> $GITHUB_OUTPUT
+              echo "warn_message='[please follow PR guidline](www.google.com)'" >> $GITHUB_OUTPUT
+            fi
+          fi
+          
+      - name: Send Warning Comment
+        env:
+          GIT_TOKEN: ${{ secrets.GIT_TOKEN }}
+        if: steps.title-check.outputs.invalid_title == 'true'
+        run: |
+          curl -X POST -H "Authorization: token $GIT_TOKEN" \
+            -d "{\"body\":\":warning: **Warning:** ${{ steps.title-check.outputs.warn_message }}\"}" \
+            "https://api.github.com/repos/${{ github.repository }}/issues/${{ github.event.pull_request.number }}/comments"
