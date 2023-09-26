@@ -5,6 +5,7 @@ on:
       - submitted
     branches:
       - master
+      - workflow
 
 jobs:
   approved:
