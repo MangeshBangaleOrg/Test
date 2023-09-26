@@ -21,14 +21,18 @@ jobs:
             TITLE_REGEX="[[A-Z]+-[0-9]+\]\s*:\s*\[[A-Z]+\]"
             MATCHING_TAGS="amstack\|sea\|msb\|ind\|thaidn\|kor\|kaz\|ana\|amer\|jpn\|eu\|ukr"
             if [[ "$PR_TITLE" =~ $TITLE_REGEX ]]; then
+              echo "ok"
               TAGS=$(echo  "$PR_TITLE" | grep -i "$MATCHING_TAGS")
+              echo " tags are : $TAGS"
               if [[ "$TAGS" == "" ]]; then
                 echo "PR title $PR_TITLE is valid."
               else
+                echo "PR title $PR_TITLE is invalid."
                 echo "invalid_title=true" >> $GITHUB_OUTPUT
                 echo "warn_message='[please follow PR guidline](www.google.com)'" >> $GITHUB_OUTPUT
               fi
             else 
+              echo "PR title $PR_TITLE is invalid."
               echo "invalid_title=true" >> $GITHUB_OUTPUT
               echo "warn_message='[please follow PR guidline](www.google.com)'" >> $GITHUB_OUTPUT
             fi
