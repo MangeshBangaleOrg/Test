@@ -19,9 +19,9 @@ jobs:
         run: |
           if [[ ${{ github.event.pull_request.base.ref }} == "master" ]]; then
             TITLE_REGEX="[[A-Z]+-[0-9]+\]\s*:\s*\[[A-Z]+\]"
-            MATCHING_TAGS="amstack\|sea\|msb\|ind\|thaidn\|kor\|kaz\|ana\|amer\|jpn\|eu\|ukr"
             if [[ "$PR_TITLE" =~ $TITLE_REGEX ]]; then
               echo "ok"
+              MATCHING_TAGS="amstack\|sea\|msb\|ind\|thaidn\|kor\|kaz\|ana\|amer\|jpn\|eu\|ukr"
               TAGS=$(echo  "$PR_TITLE" | grep -i "$MATCHING_TAGS")
               echo " tags are : $TAGS"
               if [[ "$TAGS" == "" ]]; then
