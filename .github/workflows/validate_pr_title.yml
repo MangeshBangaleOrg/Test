@@ -5,7 +5,7 @@ on:
     types: [opened, reopened]
     branches:
       - master
-      - 'workflow/**'
+      - workflow
 
 jobs:
   pr_title_check:
@@ -15,7 +15,6 @@ jobs:
         env:
           PR_TITLE: ${{ github.event.pull_request.title }}
           GIT_TOKEN: ${{ secrets.GIT_TOKEN }}
-          BRANCH_MATCHING: "workflow*"
         id: title-check
         run: |
           if [[ ${{ github.event.pull_request.base.ref }} == "master" ]]; then
@@ -29,6 +28,9 @@ jobs:
                 echo "invalid_title=true" >> $GITHUB_OUTPUT
                 echo "warn_message='[please follow PR guidline](www.google.com)'" >> $GITHUB_OUTPUT
               fi
+            else 
+              echo "invalid_title=true" >> $GITHUB_OUTPUT
+              echo "warn_message='[please follow PR guidline](www.google.com)'" >> $GITHUB_OUTPUT
             fi
           else
             TITLE_REGEX="\[[A-Z/]+-[0-9]+\]\s*:\s*\[[A-Z]+\]"
