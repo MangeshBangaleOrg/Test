@@ -48,6 +48,7 @@ jobs:
           response_code=$(curl -s -o /dev/null -w "%{http_code}" -H "Accept: application/vnd.github.v3+json" https://api.github.com/repos/${{ github.repository }}/git/refs/tags/$CURRENT_RELEASE_TAG)
           if [[ "$response_code" == "200" ]]; then
               echo "current tag $CURRENT_RELEASE_TAG is already exists in ${{ github.repository }} repo."
+              ls .github/workflows/
               chmod u+x .github/workflows/remove_review.sh
               .github/workflows/remove_review.sh ${{ steps.data.outputs.GIT_TOKEN }} ${{ github.repository }} ${{ steps.data.outputs.PR_NUMBER }} "current tag $CURRENT_RELEASE_TAG is already exists in ${{ github.repository }} repo."
               exit 1
