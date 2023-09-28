@@ -49,8 +49,8 @@ jobs:
           if [[ "$response_code" == "200" ]]; then
               echo "current tag $CURRENT_RELEASE_TAG is already exists in ${{ github.repository }} repo."
               ls .github/workflows/
-              chmod u+x .github/workflows/remove_review.sh
-              .github/workflows/remove_review.sh ${{ steps.data.outputs.GIT_TOKEN }} ${{ github.repository }} ${{ steps.data.outputs.PR_NUMBER }} "current tag $CURRENT_RELEASE_TAG is already exists in ${{ github.repository }} repo."
+              chmod u+x remove_review.sh
+              ./remove_review.sh ${{ steps.data.outputs.GIT_TOKEN }} ${{ github.repository }} ${{ steps.data.outputs.PR_NUMBER }} "current tag $CURRENT_RELEASE_TAG is already exists in ${{ github.repository }} repo."
               exit 1
           fi
           echo "TAG_NAME=$CURRENT_RELEASE_TAG" >> $GITHUB_OUTPUT
