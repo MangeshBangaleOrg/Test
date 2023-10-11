@@ -9,7 +9,7 @@ on:
 
 jobs:
   approved:
-    if: github.event.review.state == 'approved' && github.event.review.user.login =='mangeshbangale27'
+    if: github.event.review.state == 'approved' && $( github.event.review.user | | jq 'length' ) == 1 
     runs-on: ubuntu-latest
     steps:
       - name: get PR title and number
