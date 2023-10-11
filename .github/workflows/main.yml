@@ -15,9 +15,7 @@ jobs:
       - name: get PR title and number
         id: data
         run: |
-          reviewers=$(jq -r '.reviewers[].login' $GITHUB_EVENT_PATH)
-          echo "$reviewers"
-          echo "data is ${{ toJson(github.event.review) }} "
+          echo "data is ${{ toJson(github.event.review.user.login) }} "
           echo "This PR was approved"
           echo "PR_NUMBER=${{ github.event.pull_request.number }}" >> $GITHUB_OUTPUT
           echo "PR_TITLE=${{ github.event.pull_request.title }}" >> $GITHUB_OUTPUT
