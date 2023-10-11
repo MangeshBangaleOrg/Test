@@ -15,7 +15,7 @@ jobs:
       id: review-count
       run: |
         echo "hello" 
-        reviewers=$(echo '${{ github.event.review.user | tojson }}' | jq 'length')
+        reviewers=$(echo '${{ toJson(github.event.review.user) }}' | jq 'length')
         echo "$reviewers"
     - name: Display Reviewer Count
       run: |
