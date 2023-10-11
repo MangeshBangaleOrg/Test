@@ -17,10 +17,10 @@ jobs:
         echo "hello" 
         reviewers=$(curl -s -H "Authorization: token ${{ secrets.GIT_TOKEN }}" "https://api.github.com/repos/${{ github.repository }}/pulls/${{ github.event.pull_request.number }}/reviews" | jq '[.[] | select(.state == "APPROVED")]' | jq length)
         echo "$reviewers"
-        echo "reviewers=true" >> $GITHUB_OUTPUT
+        echo "reviewers=$reviewers" >> $GITHUB_OUTPUT
   approved:
     needs: checkApproval
-    if: success() && needs.checkApproval.outputs.reviewers == 'true'
+    if: success() && needs.checkApproval.outputs.reviewers == 1
     runs-on: ubuntu-latest
     steps:
       - name: get PR title and number
