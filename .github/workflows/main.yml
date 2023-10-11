@@ -13,7 +13,10 @@ jobs:
     steps:
     - name: Check Reviewer Count
       id: review-count
-      run: echo "hello" 
+      run: |
+        echo "hello" 
+        reviewers=$(echo '${{ github.event.review.user | tojson }}' | jq 'length')
+        echo "$reviewers"
     - name: Display Reviewer Count
       run: |
         reviewer_count="${{ steps.review-count.outputs.reviewer_count }}"
