@@ -18,7 +18,7 @@ jobs:
           echo "data is ${{ toJson(github.event.review.user) }} " 
           r=$(curl -s -H "Authorization: token ${{ secrets.GIT_TOKEN }}" "https://api.github.com/repos/${{ github.repository }}/pulls/${{ github.event.pull_request.number }}/reviews" | jq '[.[] | select(.state == "APPROVED")]' | jq length)
           echo "$r"
-          exit 78
+          echo "${{ github.event.pull_request.requested_reviewers }}"
           echo "This PR was approved"
           echo "PR_NUMBER=${{ github.event.pull_request.number }}" >> $GITHUB_OUTPUT
           echo "PR_TITLE=${{ github.event.pull_request.title }}" >> $GITHUB_OUTPUT
