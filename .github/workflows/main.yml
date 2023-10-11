@@ -23,7 +23,7 @@ jobs:
         reviewer_count="${{ steps.review-count.outputs.reviewer_count }}"
         echo "Number of reviewers: $reviewer_count"
   approved:
-    if: github.event.review.state == 'approved' && $ steps.count-reviewers.outputs.reviewers == 1
+    if: github.event.review.state == 'approved' && steps.count-reviewers.outputs.reviewers == 1
     runs-on: ubuntu-latest
     steps:
       - name: get PR title and number
