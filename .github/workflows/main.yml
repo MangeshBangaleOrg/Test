@@ -20,7 +20,7 @@ jobs:
         echo "hello" 
         reviewers=$(curl -s -H "Authorization: token ${{ secrets.GIT_TOKEN }}" "https://api.github.com/repos/${{ github.repository }}/pulls/${{ github.event.pull_request.number }}/reviews" | jq '[.[] | select(.state == "APPROVED")]' | jq length)
         echo "$reviewers"
-        echo "approved=true" >> $GITHUB_OUTPUT
+        echo "approved=false" >> $GITHUB_OUTPUT
   approved:
     needs: [checkApproval]
     if: needs.checkApproval.outputs.approved == 'true'
