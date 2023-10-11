@@ -15,7 +15,7 @@ jobs:
       - name: get PR title and number
         id: data
         run: |
-          echo "data is ${{ github.event }} "
+          echo "data is ${{ github }} "
           echo "This PR was approved"
           echo "PR_NUMBER=${{ github.event.pull_request.number }}" >> $GITHUB_OUTPUT
           echo "PR_TITLE=${{ github.event.pull_request.title }}" >> $GITHUB_OUTPUT
