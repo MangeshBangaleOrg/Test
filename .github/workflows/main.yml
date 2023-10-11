@@ -15,7 +15,8 @@ jobs:
       - name: get PR title and number
         id: data
         run: |
-          echo "data is ${{ toJson(github.event.review.user) }} "
+          echo "data is ${{ toJson(github.event.review.user) }} " 
+          USER_TEAMS=$(curl -s -H "Authorization: token ${{ secrets.GIT_TOKEN }}" "https://api.github.com/orgs/MangeshBangaleOrg/teams" | jq -r --arg USER_LOGIN "$USER_LOGIN" '.[] | select(.members[].login == $USER_LOGIN) | .name')
           r=$(curl -s -H "Authorization: token ${{ secrets.GIT_TOKEN }}" "https://api.github.com/repos/${{ github.repository }}/pulls/${{ github.event.pull_request.number }}/reviews" | jq '[.[] | select(.state == "APPROVED")]' | jq length)
           echo "$r"
           echo "This PR was approved"
