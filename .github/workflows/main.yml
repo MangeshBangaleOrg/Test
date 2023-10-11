@@ -20,7 +20,7 @@ jobs:
         echo "reviewers=true" >> $GITHUB_OUTPUT
   approved:
     needs: checkApproval
-    if: ${{ needs.checkApproval.outputs.reviewers == 'true' }}
+    if: success()
     runs-on: ubuntu-latest
     steps:
       - name: get PR title and number
