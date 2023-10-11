@@ -18,12 +18,8 @@ jobs:
         reviewers=$(curl -s -H "Authorization: token ${{ secrets.GIT_TOKEN }}" "https://api.github.com/repos/${{ github.repository }}/pulls/${{ github.event.pull_request.number }}/reviews" | jq '[.[] | select(.state == "APPROVED")]' | jq length)
         echo "$reviewers"
         echo "reviewers=$reviewers" >> $GITHUB_OUTPUT
-    - name: Display Reviewer Count
-      run: |
-        reviewer_count="${{ steps.review-count.outputs.reviewer_count }}"
-        echo "Number of reviewers: $reviewer_count"
   approved:
-    if: steps.review-count.outputs.reviewer_count == 1
+    if: success()
     runs-on: ubuntu-latest
     steps:
       - name: get PR title and number
