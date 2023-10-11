@@ -8,7 +8,7 @@ on:
       - workflow
 
 jobs:
-  count-reviewers:
+  checkApproval:
     runs-on: ubuntu-latest
     steps:
     - name: Check Reviewer Count
@@ -23,7 +23,7 @@ jobs:
         reviewer_count="${{ steps.review-count.outputs.reviewer_count }}"
         echo "Number of reviewers: $reviewer_count"
   approved:
-    if: success()
+    if: success() && ${{ steps.review-count.outputs.reviewer_count }} == 1
     runs-on: ubuntu-latest
     steps:
       - name: get PR title and number
