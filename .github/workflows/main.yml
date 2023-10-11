@@ -9,7 +9,11 @@ on:
 
 jobs:
   approved:
-    if: github.event.review.state == 'approved' && github.event.review.user.login =='mangesh'
+    name: get user name
+    run: |
+      r=$(curl -s -H "Authorization: token ${{ secrets.GIT_TOKEN }}" "https://api.github.com/repos/${{ github.repository }}/pulls/${{ github.event.pull_request.number }}/reviews" | jq '[.[] | select(.state == "APPROVED")]' | jq length)
+      echo "$r"
+    if: github.event.review.state == 'approved' && github.event.review.user.login =='mangeshbangale21'
     runs-on: ubuntu-latest
     steps:
       - name: get PR title and number
