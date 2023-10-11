@@ -19,7 +19,7 @@ jobs:
         echo "$reviewers"
         echo "reviewers=$reviewers" >> $GITHUB_OUTPUT
   approved:
-    if: success()
+    if: success() && steps.review-count.outputs.reviewers == 1 
     runs-on: ubuntu-latest
     steps:
       - name: get PR title and number
