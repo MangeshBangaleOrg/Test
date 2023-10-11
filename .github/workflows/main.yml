@@ -10,11 +10,10 @@ on:
 jobs:
   count-reviewers:
     runs-on: ubuntu-latest
-
     steps:
     - name: Check Reviewer Count
       id: review-count
-      run: echo "::set-output name=reviewer_count::$(echo '${{ github.event.review.user }}' | jq 'length')"
+      run: echo "hello" 
     - name: Display Reviewer Count
       run: |
         reviewer_count="${{ steps.review-count.outputs.reviewer_count }}"
