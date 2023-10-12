@@ -9,7 +9,7 @@ on:
 
 jobs:
   checkApproval:
-    if: ${{ github.event.pull_request.base.ref }} == 'main'
+    if: github.event.pull_request.base.ref == 'master'
     runs-on: ubuntu-latest
     outputs:
         approved: ${{ steps.status.outputs.approved }}
