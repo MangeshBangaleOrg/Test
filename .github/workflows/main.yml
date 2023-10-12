@@ -91,7 +91,7 @@ jobs:
           -H "Authorization: Bearer ${{ steps.data.outputs.GIT_TOKEN }}" \
           -H "X-GitHub-Api-Version: 2022-11-28" \
           https://api.github.com/repos/${{ github.repository }}/pulls/${{ steps.data.outputs.PR_NUMBER }}/merge \
-          -d '{"commit_title":"Expand enum","commit_message":"Add a new value to the merge_method enum","merge_method":"merge"}')
+          -d '{"commit_title":"`'$PR_TITLE'`","commit_message":"Add a new value to the merge_method enum","merge_method":"merge"}')
           sha=$(echo $response | grep -o '"sha": "[a-f0-9]\{40\}"' | grep -o '[a-f0-9]\{40\}')
           echo "commit_sha=$sha" >> $GITHUB_OUTPUT
 
