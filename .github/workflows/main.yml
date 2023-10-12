@@ -19,7 +19,7 @@ jobs:
       run: |
         echo "hello" 
         approval_count=$(curl -s -H "Authorization: token ${{ secrets.GIT_TOKEN }}" "https://api.github.com/repos/${{ github.repository }}/pulls/${{ github.event.pull_request.number }}/reviews" | jq '[.[] | select(.state == "APPROVED")]' | jq length)
-        if [[ "$approval_count" -ge 2 ]]; then
+        if [[ "$approval_count" -ge 1 ]]; then
           echo "approval_count is : $approval_count"
           echo "approved=true" >> $GITHUB_OUTPUT
         fi
@@ -67,10 +67,14 @@ jobs:
           fi
           response_code=$(curl -s -o /dev/null -w "%{http_code}" -H "Accept: application/vnd.github.v3+json" https://api.github.com/repos/${{ github.repository }}/git/refs/tags/$CURRENT_RELEASE_TAG)
           if [[ "$response_code" == "200" ]]; then
-              echo "current tag $CURRENT_RELEASE_TAG is already exists in ${{ github.repository }} repo."
-              ls .github/workflows/
-              chmod u+x remove_review.sh
-              ./remove_review.sh ${{ steps.data.outputs.GIT_TOKEN }} ${{ github.repository }} ${{ steps.data.outputs.PR_NUMBER }} "current tag $CURRENT_RELEASE_TAG is already exists in ${{ github.repository }} repo."
+             echo "current tag $CURRENT_RELEASE_TAG is already exists in ${{ github.repository }} repo."
+             response=$(curl -L -H "Accept: application/vnd.github+json" -H "Authorization: Bearer ${{ secrets.GIT_TOKEN }}" -H "X-GitHub-Api-Version: 2022-11-28" https://api.github.com/repos/${{ github.repository }}/pulls/${{ github.event.pull_request.number }}/reviews)
+            ids=$( echo "$response" | jq -r '.[].id')
+
+            echo "review ids are: $ids"
+            for id in $ids; do
+              curl -L -X PUT -H "Accept: application/vnd.github+json" -H "Authorization: Bearer $token" -H "X-GitHub-Api-Version: 2022-11-28" https://api.github.com/repos/${{ github.repository }}/pulls/${{ github.event.pull_request.number }}/reviews/$id/dismissals -d '{"message":"current tag $CURRENT_RELEASE_TAG already exist ","event":"DISMISS"}'
+            done
               exit 1
           fi
           echo "TAG_NAME=$CURRENT_RELEASE_TAG" >> $GITHUB_OUTPUT
