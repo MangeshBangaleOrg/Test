@@ -18,7 +18,7 @@ jobs:
       id: status
 
       run: |
-        mergable=context.payload.pull_request.mergeable
+        mergable="${{ github.event.pull_request }}"
         echo "merge status is : $mergable"
         echo "hello ${{ github.event.pull_request.base.ref }}" 
         echo $GITHUB_EVENT
