@@ -19,7 +19,7 @@ jobs:
 
       run: |
         mergable="${{ github.event }}"
-        echo "data is ${{ toJson(github.event.pull_request) }} " 
+        echo "data is  ${{ github.event.pull_request.mergeable }} " 
         echo "context is toJson(context.payload.pull_request)"
         echo "merge status is : $mergable"
         echo "hello ${{ github.event.pull_request.base.ref }}" 
