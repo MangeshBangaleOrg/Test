@@ -8,13 +8,34 @@ on:
       - workflow
 
 jobs:
+  checkApproval:
+    if: github.event.pull_request.base.ref == 'master'
+    runs-on: ubuntu-latest
+    outputs:
+        approved: ${{ steps.status.outputs.approved }}
+    steps:
+    - name: Check Reviewer Count
+      id: status
+
+      run: |
+        echo "hello ${{ github.event.pull_request.base.ref }}" 
+        approval_count=$(curl -s -H "Authorization: token ${{ secrets.GIT_TOKEN }}" "https://api.github.com/repos/${{ github.repository }}/pulls/${{ github.event.pull_request.number }}/reviews" | jq '[.[] | select(.state == "APPROVED")]' | jq length)
+        if [[ "$approval_count" -ge 1 ]]; then
+          echo "approval_count is : $approval_count"
+          echo "approved=true" >> $GITHUB_OUTPUT
+        fi
   approved:
+    needs: [checkApproval]
+    if: needs.checkApproval.outputs.approved == 'true'
     runs-on: ubuntu-latest
     steps:
       - name: get PR title and number
         id: data
         run: |
-          echo "pr status is: ${{ context.payload.pull_request }} "
+          echo "data is ${{ toJson(github.event.review.user).login }} " 
+          r=$(curl -s -H "Authorization: token ${{ secrets.GIT_TOKEN }}" "https://api.github.com/repos/${{ github.repository }}/pulls/${{ github.event.pull_request.number }}/reviews" | jq '[.[] | select(.state == "APPROVED")]' | jq length)
+          echo "$r"
+          echo "${{ github.event.pull_request.requested_reviewers }}"
           echo "This PR was approved"
           echo "PR_NUMBER=${{ github.event.pull_request.number }}" >> $GITHUB_OUTPUT
           echo "PR_TITLE=${{ github.event.pull_request.title }}" >> $GITHUB_OUTPUT
