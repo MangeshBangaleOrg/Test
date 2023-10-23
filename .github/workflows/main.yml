@@ -21,6 +21,7 @@ jobs:
         mergable=context.payload.pull_request.mergeable
         echo "merge status is : $mergable"
         echo "hello ${{ github.event.pull_request.base.ref }}" 
+        echo $GITHUB_EVENT
         echo " mergable : ${{ github.event.pull_request.mergeable }}"
         approval_count=$(curl -s -H "Authorization: token ${{ secrets.GIT_TOKEN }}" "https://api.github.com/repos/${{ github.repository }}/pulls/${{ github.event.pull_request.number }}/reviews" | jq '[.[] | select(.state == "APPROVED")]' | jq length)
         if [[ "$approval_count" -ge 1 ]]; then
