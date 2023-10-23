@@ -19,7 +19,7 @@ jobs:
 
       run: |
         mergable="${{ github.event }}"
-        echo "${{ github.event.pull_request }}"
+        echo "${{ github.event.pull_request.title }}"
         echo "merge status is : $mergable"
         echo "hello ${{ github.event.pull_request.base.ref }}" 
         echo $GITHUB_EVENT
