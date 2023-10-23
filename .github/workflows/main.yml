@@ -17,7 +17,7 @@ jobs:
     - name: Check Reviewer Count
       id: status
 
-      run: |
+      script: |
         const mergable = context.payload.pull_request
         echo "merge status is : $mergable"
         echo "hello ${{ github.event.pull_request.base.ref }}" 
