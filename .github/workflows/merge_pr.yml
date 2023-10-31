@@ -1,15 +1,14 @@
 name: PR Title Check
 
 on:
-  pull_request:
-    types: [opened, reopened]
-    branches:
-      - master
-      - workflow
+  workflow_call:
 
+jobs:
+    megre_pr:
+      runs-on: ubuntu-latest
+      steps:
       - name: Merge Pull Request
         id: pr_merge
-        if: success()
         run: |
           echo "Pull request number is : ${{ github.event.pull_request.number }} "
           response=$(curl -L \
