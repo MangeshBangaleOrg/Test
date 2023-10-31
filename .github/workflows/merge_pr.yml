@@ -1,0 +1,21 @@
+name: PR Title Check
+
+on:
+  pull_request:
+    types: [opened, reopened]
+    branches:
+      - master
+      - workflow
+
+      - name: Merge Pull Request
+        id: pr_merge
+        if: success()
+        run: |
+          echo "Pull request number is : ${{ github.event.pull_request.number }} "
+          response=$(curl -L \
+          -X PUT \
+          -H "Accept: application/vnd.github+json" \
+          -H "Authorization: Bearer ${{ secrets.GIT_TOKEN }}" \
+          -H "X-GitHub-Api-Version: 2022-11-28" \
+          https://api.github.com/repos/${{ github.repository }}/pulls/${{ github.event.pull_request.number }}/merge \
+          -d '{"commit_title":"`'$PR_TITLE'`","merge_method":"merge"}')
