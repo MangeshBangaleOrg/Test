@@ -2,6 +2,11 @@ name: PR Title Check
 
 on:
   workflow_call:
+    inputs:
+      name: 
+        type: string
+        description: print name
+        required: true
 
 jobs:
     megre_pr:
@@ -10,6 +15,7 @@ jobs:
       - name: Merge Pull Request
         id: pr_merge
         run: |
+          echo "name is ${{ inputs.name }}"
           echo "Pull request number is : ${{ github.event.pull_request.number }} "
           response=$(curl -L \
           -X PUT \
